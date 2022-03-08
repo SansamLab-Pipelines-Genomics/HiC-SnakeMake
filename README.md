@@ -45,6 +45,8 @@ pairtools dedup \
  --output-unmapped - \
  --output {output.marked_pairs} \
  {input.sorted_pairs}
+ 
+# index the .pair
 pairix {output.marked_pairs}
 ```
 ### 4.  filter_pairs
@@ -73,7 +75,27 @@ pairtools select 'True' \
 pairix {output.dedup_pairs}  # sanity check & indexing
 ```
 ### 5.  add_frag2Pairs
+
+```bash
+gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
+bgzip -f {params.frag2_pairs_basename}
+pairix -f {output.frag2_pairs}
+```
+
 ### 6.  run_cooler
+
+```bash
+# use for all chromosomes and contigs
+cp {params.chrom_sizes} {params.cooler_tempchrsize}
+            
+# the cload command requires the chrom size file to exist besides the chrom size bin file.
+cooler cload pairix \
+ -p {params.cooler_n_cores} \
+ -s {params.cooler_max_split} \
+ {params.cooler_tempchrsize}:{params.cooler_bin_size} \
+ {input.frag2_pairs} \
+ {output.cooler}
+```
 
 ## Step-by-step instructions on running Snakemake pipeline:
 
