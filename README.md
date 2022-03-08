@@ -111,7 +111,7 @@ sbatch \
 --output {cluster.output}'"
 ```
 
-### 8.  Checke results, and when finished, exit environment.
+### 8.  Check results, and when finished, exit environment.
 The results will be saved to the "results" folder. Look over log files generated in either the logs/ or logs/snakelogs folders (depending on whether slurm was used).
 ```bash
 conda deactivate
