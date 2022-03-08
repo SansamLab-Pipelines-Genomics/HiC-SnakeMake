@@ -40,9 +40,16 @@ Note. The commands to do this will be different on your machine. These commands 
 ml slurm
 ml miniconda
 ```
-
-### 2.  Start the conda environment
-### 2A.  FIRST TIME ONLY:  Setup conda environment
+### 2.  Clone repository
+```bash
+git clone https://github.com/SansamLab/Process_HiC_SnakeMake.git
+# rename folder with project name
+mv Process_HiC_SnakeMake/ My_HiC_Project_Folder/
+# change directory into root of your project folder
+cd My_HiC_Project_Folder
+```
+### 3.  Start the conda environment
+### 3A.  FIRST TIME ONLY:  Setup conda environment
 ```bash
 # -f is the location of the environment .yml file. 
 ## The relative path assumes that you are in the root directory of this repository.
@@ -50,30 +57,30 @@ ml miniconda
 conda env create -f workflow/envs/HiCSnakemake.yml -p /s/sansam-lab/HiC_Conda_Environment 
 ```
 
-### 2B.  Activate conda environment
+### 3B.  Activate conda environment
 ```bash
 conda activate /s/sansam-lab/HiC_Conda_Environment
 ```
 
-### 3.  Modify the job-specific coniguration files.
-#### 3A.  Modify the config/config.yml file
+### 4.  Modify the job-specific coniguration files.
+#### 4A.  Modify the config/config.yml file
 
-#### 3B.  Modify the config/samples.csv file
+#### 4B.  Modify the config/samples.csv file
 
-#### 3C.  IF SLURM RESOURCE CHANGES ARE NEEDED. Modify the config/cluster_config.yml file
+#### 4C.  IF SLURM RESOURCE CHANGES ARE NEEDED. Modify the config/cluster_config.yml file
 
 
-### 4.  Do a dry run.
+### 5.  Do a dry run.
 ```bash
 snakemake -npr
 ```
 
-### 5.  Make a DAG diagram.
+### 6.  Make a DAG diagram.
 ```bash
 snakemake --dag | dot -Tpdf > dag.pdf
 ```
 
-### 6.  Run on cluster with slurm.
+### 7.  Run on cluster with slurm.
 ```bash
 sbatch --wrap="\
 snakemake \
@@ -90,7 +97,7 @@ sbatch \
 --output {cluster.output}'"
 ```
 
-### 7.  When finished, exit environment.
+### 8.  When finished, exit environment.
 ```bash
 conda deactivate
 ```
