@@ -76,10 +76,14 @@ You must enter paths to the following:
 
 #### 4B.  Modify the config/samples.csv file
 
+The samples.csv file in the config folder has paths to the test fastq files. You must replace those paths with those for your own fastq files. The first column of each row is the sample name. This name will be used for all output files.
+
 #### 4C.  IF SLURM RESOURCE CHANGES ARE NEEDED. Modify the config/cluster_config.yml file
 
+CPU and memory requests for each rule in the pipeline are detailed in this file. If you are using SLURM, you may need to alter this file to fit your needs/system.
 
 ### 5.  Do a dry run.
+A dry run produces a text output showing exactly what commands will be executed. Look this over carefully before submitting the full job. It is normal to see warnings about changes made to the code, input, and params.
 ```bash
 snakemake -npr
 ```
@@ -90,6 +94,7 @@ snakemake --dag | dot -Tpdf > dag.pdf
 ```
 
 ### 7.  Run on cluster with slurm.
+This snakemake pipeline could be executed without slurm, but if an hpc with slurm is used, the following will start the pipeline with the parameters defined in the config/cluster_config.yml file.
 ```bash
 sbatch --wrap="\
 snakemake \
@@ -106,7 +111,8 @@ sbatch \
 --output {cluster.output}'"
 ```
 
-### 8.  When finished, exit environment.
+### 8.  Checke results, and when finished, exit environment.
+The results will be saved to the "results" folder. Look over log files generated in either the logs/ or logs/snakelogs folders (depending on whether slurm was used).
 ```bash
 conda deactivate
 ```
