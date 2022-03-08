@@ -1,10 +1,20 @@
+# location of bwa indexed genome for the alignment
 bwa_genome: "/Volumes/hts_core/Shared/zebrafish/danRer11/noAlts/danRer11_noAlts.fa"
+# number of threads to use for bwa-mem alignment
 bwa_threads: 12
+# location of chromosome sizes file (see example in resources folder)
 chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
+# number of processors to use when sorting the pairs file
 pairtools_sort_nproc:  12
+# amount of memory to use when sorting the pairs file
 pairtools_memory:  "96G"
+# compression type for pairtools to use
 pairtools_compression_program: "lz4c"
+# path to juicer style restriction enzyme file
 juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
+# bin size for .cool file
 cooler_bin_size: 10000
+# number of cores to use when generating the .cool file
 cooler_n_cores: 12
+# maximum number of splits of chromosome when generating the .cool file
 cooler_max_split: 8
