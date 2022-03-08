@@ -66,6 +66,14 @@ conda activate /s/sansam-lab/HiC_Conda_Environment
 ### 4.  Modify the job-specific coniguration files.
 #### 4A.  Modify the config/config.yml file
 
+You must enter paths to the following:
+* bwa_genome:
+  * location of bwa indexed genome for the alignment
+* chrom_sizes
+  * chromosome sizes file
+* juicer_RE_file
+  * restriction enzyme file generated with juicer
+
 #### 4B.  Modify the config/samples.csv file
 
 #### 4C.  IF SLURM RESOURCE CHANGES ARE NEEDED. Modify the config/cluster_config.yml file
