@@ -52,7 +52,7 @@ conda env create -f workflow/envs/HiCSnakemake.yml -p /s/sansam-lab/HiC_Conda_En
 
 ### 2B.  Activate conda environment
 ```bash
-conda activate -p /s/sansam-lab/HiC_Conda_Environment
+conda activate /s/sansam-lab/HiC_Conda_Environment
 ```
 
 ### 3.  Modify the job-specific coniguration files.
