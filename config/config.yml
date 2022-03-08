@@ -1,0 +1,10 @@
+bwa_genome: "/Volumes/hts_core/Shared/zebrafish/danRer11/noAlts/danRer11_noAlts.fa"
+bwa_threads: 12
+chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
+pairtools_sort_nproc:  12
+pairtools_memory:  "96G"
+pairtools_compression_program: "lz4c"
+juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
+cooler_bin_size: 10000
+cooler_n_cores: 12
+cooler_max_split: 8
