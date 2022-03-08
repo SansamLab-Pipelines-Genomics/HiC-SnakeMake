@@ -26,9 +26,52 @@
 ![DAG of Pipeline](dag.svg)
 
 ### 1.  run_bwa_mem
+```bash
+bwa mem -t {params.bwaThreads} -SP5M {params.bwaIndex} {input.fq1} {input.fq2} | samtools view -Shb - > {output.bam}
+```
 ### 2.  make_pairs_with_pairtools_parse
+```bash
+[ -d {params.tempdir} ] || mkdir {params.tempdir}
+samtools view -h {input.bam} | \
+ pairtools parse -c {params.chrom_sizes} --add-columns mapq | \
+ pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs}
+rm -rf {params.tempdir}
+```
 ### 3.  mark_duplicates_with_pairtools_dedup
+```bash
+pairtools dedup \
+ --mark-dups \
+ --output-dups - \
+ --output-unmapped - \
+ --output {output.marked_pairs} \
+ {input.sorted_pairs}
+pairix {output.marked_pairs}
+```
 ### 4.  filter_pairs
+```bash
+## Generate lossless bam
+pairtools split \
+ --output-sam {output.lossless_bam} \
+ {input.marked_pairs}
+ 
+# Select UU, UR, RU reads
+pairtools select \
+ '(pair_type == "UU") or (pair_type == "UR") or (pair_type == "RU")' \
+ --output-rest {output.unmapped_sam} \
+ --output {params.temp_file} \
+ {input.marked_pairs}
+ 
+pairtools split \
+ --output-pairs {params.temp_file1} \
+ {params.temp_file}
+ 
+pairtools select 'True' \
+ --chrom-subset {params.chrom_sizes} \
+ -o {output.dedup_pairs} \
+ {params.temp_file1}
+ 
+pairix {output.dedup_pairs}  # sanity check & indexing
+```
 ### 5.  add_frag2Pairs
 ### 6.  run_cooler
 
