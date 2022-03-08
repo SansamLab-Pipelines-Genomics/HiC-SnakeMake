@@ -28,7 +28,7 @@
 ## Step-by-step instructions on running Snakemake pipeline:
 
 ### 1.  Load slurm and miniconda
-Note. The commands to do this will be different on your machine. These commands are specific to an HPC using slurm.
+Note. The commands to do this will be different on your machine. These commands are specific to an HPC using slurm with these modules installed.
 
 ```bash
 ml slurm
