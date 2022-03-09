@@ -102,7 +102,7 @@ pairtools select 'True' \
 pairix {output.dedup_pairs}            
 ```
 ### 5.  add_frag2Pairs
-
+The python script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git).
 ```bash
 # convert to fragment map
 gunzip -ck {input.dedup_pairs} | \`   # unzip dsthe .pairs file generated in step 4`
