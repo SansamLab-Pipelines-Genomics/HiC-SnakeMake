@@ -1,5 +1,6 @@
 # Process_HiC_SnakeMake
- 
+## Project Description:
+
 ## Table of contents:
 * [Description of individual steps in pipeline](https://github.com/SansamLab/Process_HiC_SnakeMake/edit/main/README.md#description-of-individual-steps-in-pipeline)
   * [1.  run_bwa_mem](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#1--run_bwa_mem)
@@ -164,7 +165,7 @@ conda env create -f workflow/envs/HiCSnakemake.yml -p /s/sansam-lab/HiC_Conda_En
 conda activate /s/sansam-lab/HiC_Conda_Environment
 ```
 
-### 4.  Modify the job-specific coniguration files.
+### 4.  Modify the job-specific configuration files.
 #### 4A.  Modify the config/config.yml file
 
 You must enter paths to the following:
