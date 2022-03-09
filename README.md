@@ -203,7 +203,7 @@ sbatch \
 -A {cluster.account} \
 -p {cluster.partition} \
 --cpus-per-task {cluster.cpus-per-task}  \
-#-t {cluster.time} \
+-t {cluster.time} \
 --mem {cluster.mem} \
 --output {cluster.output}'"
 ```
