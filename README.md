@@ -27,14 +27,31 @@
 
 ### 1.  run_bwa_mem
 ```bash
-bwa mem -t {params.bwaThreads} -SP5M {params.bwaIndex} {input.fq1} {input.fq2} | samtools view -Shb - > {output.bam}
+bwa mem \
+ -t {params.bwaThreads} \
+ -SP5M \
+ {params.bwaIndex} \
+ {input.fq1} \
+ {input.fq2} | \
+ samtools view -Shb - > {output.bam}
 ```
 ### 2.  make_pairs_with_pairtools_parse
 ```bash
+# create a temporary directory for sorting the .pairs file
 [ -d {params.tempdir} ] || mkdir {params.tempdir}
-samtools view -h {input.bam} | \
- pairtools parse -c {params.chrom_sizes} --add-columns mapq | \
- pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs}
+
+# Find ligation junctions in .sam, make sorted .pairs file. 
+samtools view -h {input.bam} | \ `# convert .bam file from bwa-mem alignment to .sam`
+ pairtools parse \`               # parse ligated reads into pairs`
+  -c {params.chrom_sizes} \`       ## path to file with chromosome sizes`
+  --add-columns mapq | \`          ## option to add column with read mapq scores`
+ pairtools sort \`                # sort pairs`
+  --nproc {params.nproc} \`        ## number of processors to use for sorting`
+  --memory {params.memory} \`      ## amount of memory for sorting`
+  --tmpdir {params.tempdir} \`     ## temporary directory path for sorting`
+  --output {output.sorted_pairs}`  ## path and name of .pairs file made`
+
+# Delete the temporary directory used for sorting
 rm -rf {params.tempdir}
 ```
 ### 3.  mark_duplicates_with_pairtools_dedup
