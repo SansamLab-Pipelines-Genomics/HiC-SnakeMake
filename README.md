@@ -40,7 +40,7 @@ bwa mem \
 # create a temporary directory for sorting the .pairs file
 [ -d {params.tempdir} ] || mkdir {params.tempdir}
 
-# Find ligation junctions in .sam, make sorted .pairs file. 
+# Find ligation junctions in .sam, make sorted .pairsam file. 
 samtools view -h {input.bam} | \ `# convert .bam file from bwa-mem alignment to .sam`
  pairtools parse \`               # parse ligated reads into pairs`
   -c {params.chrom_sizes} \`       ## path to file with chromosome sizes`
@@ -56,46 +56,61 @@ rm -rf {params.tempdir}
 ```
 ### 3.  mark_duplicates_with_pairtools_dedup
 ```bash
+# Find and mark PCR/optical duplicates in .pairsam file from step 2.
 pairtools dedup \
- --mark-dups \
- --output-dups - \
- --output-unmapped - \
- --output {output.marked_pairs} \
- {input.sorted_pairs}
+ --mark-dups \`                    # duplicate pairs are marked as DD in pair_type and as a duplicate in the sam entries.`
+ --output-dups - \`                # output duplicates together with deduped pairs`
+ --output-unmapped - \`            # output unmapped pairs together with deduped pairs`
+ --output {output.marked_pairs} \` # name of output .pairs file with duplicates marked`
+ {input.sorted_pairs}`             # .pairsam file input from step 2`
  
-# index the .pair
+# index the .pairsam
 pairix {output.marked_pairs}
 ```
 ### 4.  filter_pairs
 ```bash
-## Generate lossless bam
+## Generate lossless bam from the pairsam file
 pairtools split \
- --output-sam {output.lossless_bam} \
- {input.marked_pairs}
+ --output-sam {output.lossless_bam} \`# name of .bam file produced`
+ {input.marked_pairs}`                # .pairsam file input from step 3`
  
 # Select UU, UR, RU reads
+ ## UU = unique-unique, both alignments are unique
+ ## UR or RU = unique-rescued, one alignment unique, the other rescued
 pairtools select \
  '(pair_type == "UU") or (pair_type == "UR") or (pair_type == "RU")' \
- --output-rest {output.unmapped_sam} \
- --output {params.temp_file} \
- {input.marked_pairs}
+ --output-rest {output.unmapped_sam} \ `# name of file with the remainder of read pairs`
+ --output {params.temp_file} \`         # temporary output file with the selected read pairs`
+ {input.marked_pairs}`                  # .pairsam file input from step 3`
  
+# Generate .pairs file from the UU, UR, and RU reads selected above
 pairtools split \
- --output-pairs {params.temp_file1} \
- {params.temp_file}
+ --output-pairs {params.temp_file1} \`  # temporary .pairs output file`
+ {params.temp_file}`                    # input .pairsam file generated with pairtools select above`
  
+# Make a .pairs file with only pairs in chromosomes of interest
 pairtools select 'True' \
- --chrom-subset {params.chrom_sizes} \
- -o {output.dedup_pairs} \
- {params.temp_file1}
- 
-pairix {output.dedup_pairs}  # sanity check & indexing
+ --chrom-subset {params.chrom_sizes} \` # path to a chromosomes file containing a chromosome subset of interest.`
+ -o {output.dedup_pairs} \`             # ouput path and filename for .pairs file in chromosomes of interest`
+ {params.temp_file1}`                   # input .pairsam file generated with pairtools split above`
+
+# index the .pairs file
+pairix {output.dedup_pairs}            
 ```
 ### 5.  add_frag2Pairs
 
 ```bash
-gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
+# convert to fragment map
+gunzip -ck {input.dedup_pairs} | \`   # unzip dsthe .pairs file generated in step 4`
+ workflow/scripts/fragment_4dnpairs.pl \
+  -a - `                              # allows replacing existing frag1/frag2 columns`\
+  {params.frag2_pairs_basename} \ `   # filename for .pairs file generated`
+  {params.restriction_file}`          # a restriction site file, which lists on each line, the sorted locations of the enzyme restriction sites.`
+
+# Compress the .pairs file generated
 bgzip -f {params.frag2_pairs_basename}
+
+# Index the .pairs file generated
 pairix -f {output.frag2_pairs}
 ```
 
