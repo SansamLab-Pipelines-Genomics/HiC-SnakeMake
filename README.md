@@ -27,13 +27,17 @@
 
 ### 1.  run_bwa_mem
 ```bash
+# align pair of .fastq files to the genome and convert the .sam output to .bam
 bwa mem \
- -t {params.bwaThreads} \
- -SP5M \
- {params.bwaIndex} \
- {input.fq1} \
- {input.fq2} | \
- samtools view -Shb - > {output.bam}
+ -t {params.bwaThreads} \`            # number of threads to use for alignment`
+ -SP5M \`                             # -5 for split alignment, take the alignment with the smallest coordinate as primary
+                                      # -S skip mate rescue
+                                      # -P skip pairing
+                                      # -M mark shorter split hits as secondary`
+ {params.bwaIndex} \`                 # path to bwa indexed genome`
+ {input.fq1} \`                       # path to fastq 1`
+ {input.fq2} | \`                     # path to fastq 2`
+ samtools view -Shb - > {output.bam}` # convert bwa mem output to .bam file with header`
 ```
 ### 2.  make_pairs_with_pairtools_parse
 ```bash
