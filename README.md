@@ -231,10 +231,17 @@ conda deactivate
 
 Goloborodko, A., Nezar Abdennur, Venev, S., Hbbrandao, & Gfudenberg. (2019). mirnylab/pairtools v0.3.0 (v0.3.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.2649383
 
+Abdennur, N., Goloborodko, A., Imakaev, M., Kerpedjiev, P., Fudenberg, G., Oullette, S., Lee, S., Strobelt, H., Gehlenborg, N., & Mirny, L. (2021). open2c/cooler: v0.8.11 (v0.8.11) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.4655850
+
 Lee, S., Bakker, C. R., Vitzthum, C., Alver, B. H., & Park, P. J. (2022). Pairs and Pairix: a file format and a tool for efficient storage and retrieval for Hi-C read pairs. In C. Alkan (Ed.), Bioinformatics (Vol. 38, Issue 6, pp. 1729–1731). Oxford University Press (OUP). https://doi.org/10.1093/bioinformatics/btab870
+
+Durand, N. C., Shamim, M. S., Machol, I., Rao, S. S. P., Huntley, M. H., Lander, E. S., & Aiden, E. L. (2016). Juicer provides a one-click system for analyzing loop-resolution hi-c experiments. Cell Systems, 3(1), 95–98. https://doi.org/10.1016/j.cels.2016.07.002
+
+Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., Whitwham, A., Keane, T., McCarthy, S. A., Davies, R. M., & Li, H. (2021). Twelve years of samtools and bcftools. GigaScience, 10(2), giab008. https://doi.org/10.1093/gigascience/giab008
 
 Li, H. (2013). Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM. ArXiv:1303.3997 [q-Bio]. http://arxiv.org/abs/1303.3997
 
 Köster, J., & Rahmann, S. (2012). Snakemake—A scalable bioinformatics workflow engine. Bioinformatics (Oxford, England), 28(19), 2520–2522. https://doi.org/10.1093/bioinformatics/bts480
 
-Abdennur, N., Goloborodko, A., Imakaev, M., Kerpedjiev, P., Fudenberg, G., Oullette, S., Lee, S., Strobelt, H., Gehlenborg, N., & Mirny, L. (2021). open2c/cooler: v0.8.11 (v0.8.11) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.4655850
+Anaconda Software Distribution. (2020). Anaconda Documentation. Anaconda Inc. Retrieved from https://docs.anaconda.com/
+
