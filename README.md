@@ -103,7 +103,10 @@ pairtools select 'True' \
 pairix {output.dedup_pairs}            
 ```
 ### 5.  add_frag2Pairs
-The python script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git).
+The python script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git) (Release 1.6).
+Github - aidenlab/juicer: A one-click system for analyzing loop-resolution hi-c experiments. (n.d.). GitHub. Retrieved March 10, 2022, from https://github.com/aidenlab/juicer
+
+
 ```bash
 # convert to fragment map
 gunzip -ck {input.dedup_pairs} | \`   # unzip dsthe .pairs file generated in step 4`
@@ -217,3 +220,15 @@ The results will be saved to the "results" folder. Look over log files generated
 ```bash
 conda deactivate
 ```
+
+## References:
+
+Goloborodko, A., Nezar Abdennur, Venev, S., Hbbrandao, & Gfudenberg. (2019). mirnylab/pairtools v0.3.0 (v0.3.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.2649383
+
+Lee, S., Bakker, C. R., Vitzthum, C., Alver, B. H., & Park, P. J. (2022). Pairs and Pairix: a file format and a tool for efficient storage and retrieval for Hi-C read pairs. In C. Alkan (Ed.), Bioinformatics (Vol. 38, Issue 6, pp. 1729–1731). Oxford University Press (OUP). https://doi.org/10.1093/bioinformatics/btab870
+
+Li, H. (2013). Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM. ArXiv:1303.3997 [q-Bio]. http://arxiv.org/abs/1303.3997
+
+Köster, J., & Rahmann, S. (2012). Snakemake—A scalable bioinformatics workflow engine. Bioinformatics (Oxford, England), 28(19), 2520–2522. https://doi.org/10.1093/bioinformatics/bts480
+
+
