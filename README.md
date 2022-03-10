@@ -231,4 +231,4 @@ Li, H. (2013). Aligning sequence reads, clone sequences and assembly contigs wit
 
 Köster, J., & Rahmann, S. (2012). Snakemake—A scalable bioinformatics workflow engine. Bioinformatics (Oxford, England), 28(19), 2520–2522. https://doi.org/10.1093/bioinformatics/bts480
 
-
+Abdennur, N., Goloborodko, A., Imakaev, M., Kerpedjiev, P., Fudenberg, G., Oullette, S., Lee, S., Strobelt, H., Gehlenborg, N., & Mirny, L. (2021). open2c/cooler: v0.8.11 (v0.8.11) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.4655850
