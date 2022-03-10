@@ -103,8 +103,14 @@ pairtools select 'True' \
 pairix {output.dedup_pairs}            
 ```
 ### 5.  add_frag2Pairs
-The python script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git) (Release 1.6).
-Github - aidenlab/juicer: A one-click system for analyzing loop-resolution hi-c experiments. (n.d.). GitHub. Retrieved March 10, 2022, from https://github.com/aidenlab/juicer
+The pearl script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git) (Release 1.6).
+Github - aidenlab/juicer: A one-click system for analyzing loop-resolution hi-c experiments. (n.d.). GitHub. Retrieved March 10, 2022, from https://github.com/aidenlab/juicer. This requres a restriction site file. See [these instructions](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/RE_File_Instructions.md) for generating this file outside of the snakemake pipeline.
+
+#### 5A.  FIRST TIME ONLY. Generate restriction site file.
+
+```bash
+python generate_site_positions.py 'HindIII' 'ecoli' '/net/qlotsam.lan.omrf.org/qlotsam/data/sansam/hpc-nobackup/scripts/CutAndRun_2020Aug1/ecoliBowtie2/GCF_000005845.2_ASM584v2_genomic.fna'"
+```
 
 
 ```bash
