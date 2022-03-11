@@ -5,7 +5,7 @@ bwa_threads: 12
 # location of chromosome sizes file (see example in resources folder)
 chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
 # number of processors to use when sorting the pairs file
-pairtools_sort_nproc:  4
+pairtools_sort_nproc:  8
 # amount of memory to use when sorting the pairs file
 pairtools_memory:  "256G"
 # path to juicer style restriction enzyme file
