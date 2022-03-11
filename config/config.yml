@@ -5,11 +5,9 @@ bwa_threads: 12
 # location of chromosome sizes file (see example in resources folder)
 chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
 # number of processors to use when sorting the pairs file
-pairtools_sort_nproc:  12
+pairtools_sort_nproc:  4
 # amount of memory to use when sorting the pairs file
-pairtools_memory:  "96G"
-# compression type for pairtools to use
-pairtools_compression_program: "lz4c"
+pairtools_memory:  "256G"
 # path to juicer style restriction enzyme file
 juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
 # bin size for .cool file
