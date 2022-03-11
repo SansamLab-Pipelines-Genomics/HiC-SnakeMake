@@ -28,7 +28,9 @@ def fq_dict_from_sample(wildcards):
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
 rule all:
     input:
-        expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+        expand("results/pairs/{sample}_pairs.gz",sample=samples_table.index)
+        #expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+        
 
 rule run_bwa_mem:
 #run-bwa-mem.sh
@@ -66,16 +68,32 @@ rule make_pairs_with_pairtools_parse:
     params:
         nproc=config["pairtools_sort_nproc"],
         memory=config["pairtools_memory"],
-        comp_prog=config["pairtools_compression_program"],
+        chrom_sizes=config["chrom_sizes"]
+    output:
+        pairs="results/pairs/{sample}_pairs.gz"
+    log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
+    shell:
+        """
+        #samtools view -@ {params.nproc} -h {input.bam} | head -n 10000 > {input.bam}.sam
+        pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
+        #rm {input.bam}.sam
+        """
+
+rule sort_pairs_with_pairtools_sort:
+    input:
+        pairs="results/pairs/{sample}_pairs.gz"
+    params:
+        nproc=config["pairtools_sort_nproc"],
+        memory=config["pairtools_memory"],
         tempdir="results/{sample}_temp/",
         chrom_sizes=config["chrom_sizes"]
     output:
-        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.lz4"
+        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
     log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
     shell:
         """
         [ -d {params.tempdir} ] || mkdir {params.tempdir}
-        samtools view -h {input.bam} | pairtools parse -c {params.chrom_sizes} --add-columns mapq | pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs}
+        pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {output.pairs}
         rm -rf {params.tempdir}
         """
 
@@ -85,7 +103,7 @@ rule make_pairs_with_pairtools_parse:
 rule mark_duplicates_with_pairtools_dedup:
 #run-pairsam-markasdup.sh
     input:
-        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.lz4"
+        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
     output:
         marked_pairs="results/marked_pairs/{sample}.marked.sam.pairs.gz"
     log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample}.log"
