@@ -5,10 +5,11 @@
 * [Description of individual steps in pipeline](https://github.com/SansamLab/Process_HiC_SnakeMake/edit/main/README.md#description-of-individual-steps-in-pipeline)
   * [1.  run_bwa_mem](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#1--run_bwa_mem)
   * [2.  make_pairs_with_pairtools_parse](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#2--make_pairs_with_pairtools_parse)
-  * [3.  mark_duplicates_with_pairtools_dedup](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#3--mark_duplicates_with_pairtools_dedup)
-  * [4.  filter_pairs](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#4--filter_pairs)
-  * [5.  add_frag2Pairs](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#5--add_frag2pairs)
-  * [6.  run_cooler](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#6--run_cooler)
+  * [3.  sort_pairs_with_pairtools_sort](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#3--sort_pairs_with_pairtools_sort)
+  * [4.  mark_duplicates_with_pairtools_dedup](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#4--mark_duplicates_with_pairtools_dedup)
+  * [5.  filter_pairs](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#5--filter_pairs)
+  * [6.  add_frag2Pairs](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#6--add_frag2pairs)
+  * [7.  run_cooler](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#7--run_cooler)
 * [Step-by-step instructions on running Snakemake pipeline:](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#step-by-step-instructions-on-running-snakemake-pipeline)
   * [1.  Load slurm and miniconda](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#1--load-slurm-and-miniconda)
   * [2.  Clone repository](https://github.com/SansamLab/Process_HiC_SnakeMake#2--clone-repository)
@@ -42,37 +43,43 @@ bwa mem \
 ```
 ### 2.  make_pairs_with_pairtools_parse
 ```bash
-# create a temporary directory for sorting the .pairs file
+pairtools parse \
+  -c {params.chrom_sizes} \
+  --drop-sam \
+  --add-columns mapq \
+  --output {output.pairs} \
+  {input.bam}
+```
+
+### 3.  sort_pairs_with_pairtools_sort
+```bash
+# if temporary directory is not available, make it
 [ -d {params.tempdir} ] || mkdir {params.tempdir}
-
-# Find ligation junctions in .sam, make sorted .pairsam file. 
-samtools view -h {input.bam} | \ `# convert .bam file from bwa-mem alignment to .sam`
- pairtools parse \`               # parse ligated reads into pairs`
-  -c {params.chrom_sizes} \`       ## path to file with chromosome sizes`
-  --add-columns mapq | \`          ## option to add column with read mapq scores`
- pairtools sort \`                # sort pairs`
-  --nproc {params.nproc} \`        ## number of processors to use for sorting`
-  --memory {params.memory} \`      ## amount of memory for sorting`
-  --tmpdir {params.tempdir} \`     ## temporary directory path for sorting`
-  --output {output.sorted_pairs}`  ## path and name of .pairs file made`
-
-# Delete the temporary directory used for sorting
+# sort .pairs file created in step 2
+pairtools sort \
+  --nproc {params.nproc} \
+  --memory {params.memory} \
+  --tmpdir {params.tempdir} \
+  --output {output.sorted_pairs} \
+  {output.pairs}
+# remove temporary directory after sorting
 rm -rf {params.tempdir}
 ```
-### 3.  mark_duplicates_with_pairtools_dedup
+
+### 4.  mark_duplicates_with_pairtools_dedup
 ```bash
-# Find and mark PCR/optical duplicates in .pairsam file from step 2.
+# Find and mark PCR/optical duplicates in .pairs file from step 3.
 pairtools dedup \
  --mark-dups \`                    # duplicate pairs are marked as DD in pair_type and as a duplicate in the sam entries.`
  --output-dups - \`                # output duplicates together with deduped pairs`
  --output-unmapped - \`            # output unmapped pairs together with deduped pairs`
  --output {output.marked_pairs} \` # name of output .pairs file with duplicates marked`
- {input.sorted_pairs}`             # .pairsam file input from step 2`
+ {input.sorted_pairs}`             # .pairsam file input from step 3`
  
 # index the .pairsam
 pairix {output.marked_pairs}
 ```
-### 4.  filter_pairs
+### 5.  filter_pairs
 ```bash
 ## Generate lossless bam from the pairsam file
 pairtools split \
@@ -86,7 +93,7 @@ pairtools select \
  '(pair_type == "UU") or (pair_type == "UR") or (pair_type == "RU")' \
  --output-rest {output.unmapped_sam} \ `# name of file with the remainder of read pairs`
  --output {params.temp_file} \`         # temporary output file with the selected read pairs`
- {input.marked_pairs}`                  # .pairsam file input from step 3`
+ {input.marked_pairs}`                  # .pairs file input from step 4`
  
 # Generate .pairs file from the UU, UR, and RU reads selected above
 pairtools split \
@@ -102,11 +109,11 @@ pairtools select 'True' \
 # index the .pairs file
 pairix {output.dedup_pairs}            
 ```
-### 5.  add_frag2Pairs
+### 6.  add_frag2Pairs
 The pearl script used here (fragment_4dnpairs.pl) is from this [GitHub](https://github.com/aidenlab/juicer.git) (Release 1.6).
 Github - aidenlab/juicer: A one-click system for analyzing loop-resolution hi-c experiments. (n.d.). GitHub. Retrieved March 10, 2022, from https://github.com/aidenlab/juicer. This requres a restriction site file. See [these instructions](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/RE_File_Instructions.md) for generating this file outside of the snakemake pipeline.
 
-#### 5A.  FIRST TIME ONLY. Generate restriction site file.
+#### 6A.  FIRST TIME ONLY. Generate restriction site file.
 
 ```bash
 python generate_site_positions.py 'HindIII' 'ecoli' '/net/qlotsam.lan.omrf.org/qlotsam/data/sansam/hpc-nobackup/scripts/CutAndRun_2020Aug1/ecoliBowtie2/GCF_000005845.2_ASM584v2_genomic.fna'"
@@ -128,7 +135,7 @@ bgzip -f {params.frag2_pairs_basename}
 pairix -f {output.frag2_pairs}
 ```
 
-### 6.  run_cooler
+### 7.  run_cooler
 
 ```bash
 # use for all chromosomes and contigs

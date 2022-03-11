@@ -74,9 +74,7 @@ rule make_pairs_with_pairtools_parse:
     log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
     shell:
         """
-        #samtools view -@ {params.nproc} -h {input.bam} | head -n 10000 > {input.bam}.sam
         pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
-        #rm {input.bam}.sam
         """
 
 rule sort_pairs_with_pairtools_sort:
