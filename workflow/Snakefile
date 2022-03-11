@@ -91,7 +91,7 @@ rule sort_pairs_with_pairtools_sort:
     shell:
         """
         [ -d {params.tempdir} ] || mkdir {params.tempdir}
-        pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {output.pairs}
+        pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {input.pairs}
         rm -rf {params.tempdir}
         """
 
