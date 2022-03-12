@@ -26,10 +26,16 @@ def fq_dict_from_sample(wildcards):
 ##################################################################
 
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
-rule all:
-    input:
-        expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
-        #expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index)
+if config["merge_as_sequencing_replicates"]:
+    rule all:
+        input:
+            "results/cooler/{params.filename}."+str(config["cooler_bin_size"])+".cool"
+else:
+    rule all:
+        input:
+            expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample2=samples_table.index)
+
+
         
 
 rule run_bwa_mem:
