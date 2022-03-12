@@ -26,7 +26,7 @@ def fq_dict_from_sample(wildcards):
 ##################################################################
 
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
-if config["merge_as_sequencing_replicates"]:
+if config["merge_as_sequencing_replicates"] or config["merge_as_biological_replicates"]:
     rule all:
         input:
             expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample2=config["merged_sample_name"])
