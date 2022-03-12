@@ -126,7 +126,7 @@ if config["merge_as_sequencing_replicates"]:
         params:
             sorted_pairs_list=' '.join(samples_table.index.tolist()),
             filename=config["merged_sample_name"]
-        log: "results/logs/snakelogs/merge_sequencing_replicates.{sample}.log"
+        log: "results/logs/snakelogs/merge_sequencing_replicates.{sample2}.log"
         shell:
             """
             pairtools merge {params.sorted_pairs_list} --output "results/sorted_pairs/"{params.filename}"_sorted.pairs.gz"
