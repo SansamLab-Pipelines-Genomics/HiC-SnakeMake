@@ -28,7 +28,7 @@ def fq_dict_from_sample(wildcards):
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
 rule all:
     input:
-        expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+        expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
         #expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index)
         
 
@@ -162,13 +162,13 @@ rule filter_pairs:
 
 rule add_frag2Pairs:
     input:
-        dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz"
+        dedup_pairs="results/filtered_pairs/{sample2}.dedup.pairs.gz"
     output:
-        frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz"
+        frag2_pairs="results/frag2_pairs/{sample2}.frag2pairs.pairs.gz"
     params:
         restriction_file=config["juicer_RE_file"],
-        frag2_pairs_basename="results/frag2_pairs/{sample}.frag2pairs.pairs"
-    log: "results/logs/snakelogs/add_frag2Pairs.{sample}.log"
+        frag2_pairs_basename="results/frag2_pairs/{sample2}.frag2pairs.pairs"
+    log: "results/logs/snakelogs/add_frag2Pairs.{sample2}.log"
     shell:
         """
         gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
@@ -178,16 +178,16 @@ rule add_frag2Pairs:
 
 rule run_cooler:
     input:
-        frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz"
+        frag2_pairs="results/frag2_pairs/{sample2}.frag2pairs.pairs.gz"
     output:
-        cooler="results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool"
+        cooler="results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool"
     params:
         chrom_sizes=config["chrom_sizes"],
         cooler_bin_size=config["cooler_bin_size"],
         cooler_n_cores=config["cooler_n_cores"],
         cooler_max_split=config["cooler_max_split"],
-        cooler_tempchrsize="./{sample}_tempchrsize"
-    log: "results/logs/snakelogs/run_cooler.{sample}.log"
+        cooler_tempchrsize="./{sample2}_tempchrsize"
+    log: "results/logs/snakelogs/run_cooler.{sample2}.log"
     shell:
         """
         # use for all chromosomes and contigs
