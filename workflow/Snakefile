@@ -129,7 +129,7 @@ if config["merge_as_sequencing_replicates"]:
         log: expand("results/logs/snakelogs/merge_sequencing_replicates.{sample2}.log",sample2=config["merged_sample_name"])
         shell:
             """
-            pairtools merge --output "results/sorted_pairs/"{params.filename}"_sorted.pairs.gz" {params.sorted_pairs_list}
+            pairtools merge --output results/sorted_pairs/{params.filename}_sorted.pairs.gz {params.sorted_pairs_list}
             """
 
 rule mark_duplicates_with_pairtools_dedup:
