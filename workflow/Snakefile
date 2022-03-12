@@ -28,7 +28,7 @@ def fq_dict_from_sample(wildcards):
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
 rule all:
     input:
-        expand("results/pairs/{sample}_pairs.gz",sample=samples_table.index)
+        expand("results/marked_pairs/{sample}.marked.sam.pairs.gz",sample=samples_table.index)
         #expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
         
 
