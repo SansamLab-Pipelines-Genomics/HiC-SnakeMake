@@ -7,7 +7,7 @@ chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
 # number of processors to use when sorting the pairs file
 pairtools_sort_nproc:  8
 # amount of memory to use when sorting the pairs file
-pairtools_memory:  "256G"
+pairtools_memory:  "96G"
 # path to juicer style restriction enzyme file
 juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
 # bin size for .cool file
