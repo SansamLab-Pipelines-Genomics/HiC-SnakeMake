@@ -89,7 +89,7 @@ if config["merge_as_sequencing_replicates"]:
             rm -rf {params.tempdir}
             """
 else:
-   rule sort_pairs_with_pairtools_sort:
+    rule sort_pairs_with_pairtools_sort:
     input:
         pairs="results/pairs/{sample}_pairs.gz"
     params:
