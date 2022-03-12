@@ -64,7 +64,7 @@ rule make_pairs_with_pairtools_parse:
         chrom_sizes=config["chrom_sizes"]
     output:
         pairs="results/pairs/{sample}_pairs.gz"
-    log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
+    log: "results/logs/snakelogs/make_pairs_with_pairtools_parse.{sample}.log"
     shell:
         """
         pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
@@ -114,15 +114,16 @@ if config["merge_as_sequencing_replicates"]:
     rule merge_sequencing_replicates:
         input:
             #sorted_pairs=.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
-            sorted_pairs=' '.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
+            sorted_pairs=expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)
         output:
             merged="results/sorted_pairs/{sample2}_sorted.pairs.gz"
         params:
+            sorted_pairs_list=' '.join(expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)),
             filename=config["merged_sample_name"]
         log: "results/logs/snakelogs/merge_sequencing_replicates.{sample}.log"
         shell:
             """
-            pairtools merge {input.sorted_pairs} --output "results/sorted_pairs/"{params.filename}"_sorted.pairs.gz"
+            pairtools merge {params.sorted_pairs_list} --output "results/sorted_pairs/"{params.filename}"_sorted.pairs.gz"
             """
 
 rule mark_duplicates_with_pairtools_dedup:
