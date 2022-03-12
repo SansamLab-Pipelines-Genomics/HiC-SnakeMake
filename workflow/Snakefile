@@ -29,7 +29,7 @@ def fq_dict_from_sample(wildcards):
 if config["merge_as_sequencing_replicates"]:
     rule all:
         input:
-            "results/cooler/{params.filename}."+str(config["cooler_bin_size"])+".cool"
+            expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample2=config["merged_sample_name"])
 else:
     rule all:
         input:
