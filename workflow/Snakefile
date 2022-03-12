@@ -69,7 +69,7 @@ rule make_pairs_with_pairtools_parse:
         """
         pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
         """
-        
+
 if config["merge_as_sequencing_replicates"]:
     rule sort_pairs_with_pairtools_sort:
         input:
@@ -113,8 +113,8 @@ else:
 if config["merge_as_sequencing_replicates"]:
     rule merge_sequencing_replicates:
         input:
-            sorted_pairs=.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
-            #sorted_pairs=' '.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
+            #sorted_pairs=.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
+            sorted_pairs=' '.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
         output:
             merged="results/sorted_pairs/{sample2}_sorted.pairs.gz"
         params:
