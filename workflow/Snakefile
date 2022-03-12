@@ -98,7 +98,7 @@ else:
         tempdir="results/{sample}_temp/",
         chrom_sizes=config["chrom_sizes"]
     output:
-        orted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
+        sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
     log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample2}.log"
     shell:
         """
