@@ -69,8 +69,27 @@ rule make_pairs_with_pairtools_parse:
         """
         pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
         """
-
-rule sort_pairs_with_pairtools_sort:
+        
+if config["merge_as_sequencing_replicates"]:
+    rule sort_pairs_with_pairtools_sort:
+        input:
+            pairs="results/pairs/{sample}_pairs.gz"
+        params:
+            nproc=config["pairtools_sort_nproc"],
+            memory=config["pairtools_memory"],
+            tempdir="results/{sample}_temp/",
+            chrom_sizes=config["chrom_sizes"]
+        output:
+            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"    
+        log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
+        shell:
+            """
+            [ -d {params.tempdir} ] || mkdir {params.tempdir}
+            pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {input.pairs}
+            rm -rf {params.tempdir}
+            """
+else:
+   rule sort_pairs_with_pairtools_sort:
     input:
         pairs="results/pairs/{sample}_pairs.gz"
     params:
@@ -79,17 +98,14 @@ rule sort_pairs_with_pairtools_sort:
         tempdir="results/{sample}_temp/",
         chrom_sizes=config["chrom_sizes"]
     output:
-        if config["merge_as_sequencing_replicates"]:
-            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
-        else:
-            sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
+        orted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
     log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
     shell:
         """
         [ -d {params.tempdir} ] || mkdir {params.tempdir}
         pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {input.pairs}
         rm -rf {params.tempdir}
-        """
+        """ 
 
 ## Insert run-pairsam-merge.sh when needed
 # https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-merge.sh
