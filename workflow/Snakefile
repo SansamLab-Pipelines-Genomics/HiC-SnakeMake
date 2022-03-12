@@ -28,17 +28,11 @@ def fq_dict_from_sample(wildcards):
 # to run snakemake without explicitly requesting any output files on the command line, we must request output files in the first rule. Therefore we include this otherwise useless rule here  
 rule all:
     input:
-        expand("results/marked_pairs/{sample}.marked.sam.pairs.gz",sample=samples_table.index)
-        #expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+        expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+        #expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index)
         
 
 rule run_bwa_mem:
-#run-bwa-mem.sh
-    # run-bwa-mem.sh <fastq1> <fastq2> <bwaIndex> <output_prefix> <nThreads>
-            # fastq1, fastq2 : input fastq files, either gzipped or not
-            # bwaIndex : tarball for bwa index, .tgz.
-            # output_file : prefix of the output bam file.
-            # nThreads : number of threads
     input:
         unpack(fq_dict_from_sample)
     params:
@@ -55,7 +49,6 @@ rule run_bwa_mem:
         """
 
 rule make_pairs_with_pairtools_parse:
-#run-pairsam-parse-sort.sh
 # the following was copied from https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-parse-sort.sh
 # Classify Hi-C molecules as unmapped/single-sided/multimapped/chimeric/etc
     # and output one line per read, containing the following, separated by \\v:
@@ -86,7 +79,10 @@ rule sort_pairs_with_pairtools_sort:
         tempdir="results/{sample}_temp/",
         chrom_sizes=config["chrom_sizes"]
     output:
-        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
+        if config["merge_as_sequencing_replicates"]:
+            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
+        else:
+            sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
     log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
     shell:
         """
@@ -98,13 +94,27 @@ rule sort_pairs_with_pairtools_sort:
 ## Insert run-pairsam-merge.sh when needed
 # https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-merge.sh
 
+if config["merge_as_sequencing_replicates"]:
+    rule merge_sequencing_replicates:
+        input:
+            sorted_pairs=.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
+            #sorted_pairs=' '.join(expand("results/marked_pairs/{sample}.marked.pairs.gz",sample=samples_table.index))
+        output:
+            merged="results/sorted_pairs/{sample2}_sorted.pairs.gz"
+        params:
+            filename=config["merged_sample_name"]
+        log: "results/logs/snakelogs/merge_sequencing_replicates.{sample}.log"
+        shell:
+            """
+            pairtools merge {input.sorted_pairs} --output "results/sorted_pairs/"{params.filename}"_sorted.pairs.gz"
+            """
+
 rule mark_duplicates_with_pairtools_dedup:
-#run-pairsam-markasdup.sh
     input:
-        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
+        sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"
     output:
-        marked_pairs="results/marked_pairs/{sample}.marked.sam.pairs.gz"
-    log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample}.log"
+        marked_pairs="results/marked_pairs/{sample2}.marked.pairs.gz"
+    log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample2}.log"
     shell:
         """
         pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
@@ -112,33 +122,28 @@ rule mark_duplicates_with_pairtools_dedup:
         """
 
 rule filter_pairs:
-#run-pairsam-filter.sh
     input:
-        marked_pairs="results/marked_pairs/{sample}.marked.sam.pairs.gz"
+        marked_pairs="results/marked_pairs/{sample2}.marked.pairs.gz"
     output:
-        dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz",
-        lossless_bam="results/filtered_pairs/{sample}.lossless.bam",
-        unmapped_sam="results/filtered_pairs/{sample}.unmapped.sam.pairs.gz"
+        dedup_pairs="results/filtered_pairs/{sample2}.dedup.pairs.gz",
+        unmapped="results/filtered_pairs/{sample2}.unmapped.pairs.gz"
     params:
-        temp_file="results/marked_pairs/{sample}_temp.gz",
-        temp_file1="results/marked_pairs/{sample}_temp1.gz",
+        temp_file="results/marked_pairs/{sample2}_temp.gz",
         chrom_sizes=config["chrom_sizes"]
-    log: "results/logs/snakelogs/filter_pairs.{sample}.log"
+    log: "results/logs/snakelogs/filter_pairs.{sample2}.log"
     shell:
         """
-        ## Generate lossless bam
-        pairtools split --output-sam {output.lossless_bam} {input.marked_pairs}
-
         # Select UU, UR, RU reads
-        pairtools select '(pair_type == "UU") or (pair_type == "UR") or (pair_type == "RU")' --output-rest {output.unmapped_sam} --output {params.temp_file} {input.marked_pairs}
-        pairtools split --output-pairs {params.temp_file1} {params.temp_file}
-        pairtools select 'True' --chrom-subset {params.chrom_sizes} -o {output.dedup_pairs} {params.temp_file1}
-        pairix {output.dedup_pairs}  # sanity check & indexing
+        pairtools select '(pair_type == "UU") or (pair_type == "UR") or (pair_type == "RU")' --output-rest {output.unmapped} --output {params.temp_file} {input.marked_pairs}
+        # Select reads overlapping chromosomes in chromosome sizes file
+        pairtools select 'True' --chrom-subset {params.chrom_sizes} -o {output.dedup_pairs} {params.temp_file}
+        pairix {output.dedup_pairs}
+
+        # remove temp file
+        rm {params.temp_file}
         """
 
-
 rule add_frag2Pairs:
-#run-addfrag2pairs.sh
     input:
         dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz"
     output:
@@ -154,9 +159,7 @@ rule add_frag2Pairs:
         pairix -f {output.frag2_pairs}
         """
 
-
 rule run_cooler:
-#run-cooler.sh
     input:
         frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz"
     output:
@@ -173,9 +176,6 @@ rule run_cooler:
         # use for all chromosomes and contigs
         cp {params.chrom_sizes} {params.cooler_tempchrsize}
             
-        # make bin file (possibly skip?)
-        # cooler makebins -o {params.cooler_tempchrsize}:{params.cooler_bin_size} {params.cooler_tempchrsize} {params.cooler_bin_size}
-
         # the cload command requires the chrom size file to exist besides the chrom size bin file.
         cooler cload pairix -p {params.cooler_n_cores} -s {params.cooler_max_split} {params.cooler_tempchrsize}:{params.cooler_bin_size} {input.frag2_pairs} {output.cooler}
         """

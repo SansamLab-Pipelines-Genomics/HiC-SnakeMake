@@ -6,9 +6,9 @@ bwa_threads: 12
 chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
 # number of processors to use when sorting the pairs file
 pairtools_sort_nproc:  8
-# amount of memory to use when sorting the pairs file
+# gigabytes of memory (##G) to use when sorting the pairs file
 pairtools_memory:  "96G"
-# path to juicer style restriction enzyme file
+# path and name of juicer style restriction enzyme file
 juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
 # bin size for .cool file
 cooler_bin_size: 10000
@@ -16,3 +16,9 @@ cooler_bin_size: 10000
 cooler_n_cores: 12
 # maximum number of splits of chromosome when generating the .cool file
 cooler_max_split: 8
+# choose (True or Fase) whether to merge all as sequencing replicates
+merge_as_sequencing_replicates: False
+# choose (True or False) whether to merge all as biological replicates
+merge_as_biological_replicates: False
+# merged sample name ("Your_Sample_Name"). All merged files will have this in their name.
+merged_sample_name: "merged"
