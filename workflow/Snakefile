@@ -118,7 +118,7 @@ if config["merge_as_sequencing_replicates"]:
         output:
             merged="results/sorted_pairs/{sample2}_sorted.pairs.gz"
         params:
-            sorted_pairs_list=' '.join(expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)),
+            sorted_pairs_list=.join(samples_table.index.tolist()),
             filename=config["merged_sample_name"]
         log: "results/logs/snakelogs/merge_sequencing_replicates.{sample}.log"
         shell:
