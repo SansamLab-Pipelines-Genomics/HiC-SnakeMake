@@ -17,8 +17,8 @@ cooler_n_cores: 12
 # maximum number of splits of chromosome when generating the .cool file
 cooler_max_split: 8
 # choose (True or Fase) whether to merge all as sequencing replicates
-merge_as_sequencing_replicates: True
+merge_as_sequencing_replicates: False
 # choose (True or False) whether to merge all as biological replicates
-merge_as_biological_replicates: False
+merge_as_biological_replicates: True
 # merged sample name ("Your_Sample_Name"). All merged files will have this in their name.
 merged_sample_name: "merged"
