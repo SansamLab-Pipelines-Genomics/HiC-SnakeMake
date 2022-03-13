@@ -210,8 +210,8 @@ if config["merge_as_biological_replicates"]:
         log: expand("results/logs/snakelogs/merge_biological_replicates.{sample}.log",sample=config["merged_sample_name"])
         shell:
             """
-            pairtools merge --output results/sorted_pairs/{params.filename}_sorted.pairs.gz {params.frag2_pairs_list}
-            rm results/temp_sorted_pairs/*.gz
+            pairtools merge --output results/temp_frag2_pairs/{params.filename}.frag2pairs.pairs.gz {params.frag2_pairs_list}
+            rm results/temp_frag2_pairs/*.gz
             """
 
 ##############################################################################
