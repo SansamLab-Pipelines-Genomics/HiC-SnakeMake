@@ -201,7 +201,7 @@ if config["merge_as_biological_replicates"]:
             """
     rule merge_biological_replicates:
         input:
-            frag2_pairs="results/temp_frag2_pairs/{sample}.frag2pairs.pairs.gz"
+            frag2_pairs=expand("results/temp_frag2_pairs/{sample}.frag2pairs.pairs.gz",sample=samples_table.index)
         output:
             merged=expand("results/frag2_pairs/{sample}.frag2pairs.pairs.gz",sample=config["merged_sample_name"])
         params:
