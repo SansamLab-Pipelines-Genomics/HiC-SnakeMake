@@ -115,7 +115,7 @@ if config["merge_as_sequencing_replicates"]:
         shell:
             """
             pairtools merge --output results/sorted_pairs/{params.filename}_sorted.pairs.gz {params.sorted_pairs_list}
-            rm results/temp_sorted_pairs/*.gz
+            rm -rf results/temp_sorted_pairs/
             """
 
 ##################################################################
@@ -211,7 +211,8 @@ if config["merge_as_biological_replicates"]:
         shell:
             """
             pairtools merge --output results/frag2_pairs/{params.filename}.frag2pairs.pairs.gz {params.frag2_pairs_list}
-            rm results/temp_frag2_pairs/*.gz
+            pairix -f {output.merged}
+            rm -rf results/temp_frag2_pairs/
             """
 
 ##############################################################################
