@@ -21,4 +21,7 @@ merge_as_sequencing_replicates: False
 # choose (True or False) whether to merge all as biological replicates
 merge_as_biological_replicates: True
 # merged sample name ("Your_Sample_Name"). All merged files will have this in their name.
-merged_sample_name: "merged"
+merged_sample_name: "SRR12008033_4"
+# memory and number of processors for pairtools merge
+pairtools_merge_memory: "64G"
+pairtools_merge_nproc: 8

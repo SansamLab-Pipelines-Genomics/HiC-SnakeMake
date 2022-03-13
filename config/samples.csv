@@ -1,3 +1,3 @@
 sample,fastq1,fastq2
-testSample1,resources/testFiles/SRR12008033_R1.fastq,resources/testFiles/SRR12008033_R2.fastq
-testSample2,resources/testFiles/SRR12008034_R1.fastq,resources/testFiles/SRR12008034_R2.fastq
+SRR12008033,/s/sansam-lab/2022Feb24_juicer_boydk/fastq/SRR12008033_R1.fastq,/s/sansam-lab/2022Feb24_juicer_boydk/fastq/SRR12008033_R2.fastq
+SRR12008034,/s/sansam-lab/2022Feb24_juicer_boydk/fastq/SRR12008034_R1.fastq,/s/sansam-lab/2022Feb24_juicer_boydk/fastq/SRR12008034_R2.fastq
