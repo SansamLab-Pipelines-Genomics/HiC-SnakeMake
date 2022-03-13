@@ -35,9 +35,10 @@ else:
         input:
             expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
 
-
+#################################################################
+##                    Align reads to genome                    ##
+#################################################################
         
-
 rule run_bwa_mem:
     input:
         unpack(fq_dict_from_sample)
@@ -53,6 +54,10 @@ rule run_bwa_mem:
         """
         bwa mem -t {params.bwaThreads} -SP5M {params.bwaIndex} {input.fq1} {input.fq2} | samtools view -Shb - > {output.bam}  
         """
+
+#################################################################
+##               Parse aligned reads into .pairs               ##
+#################################################################
 
 rule make_pairs_with_pairtools_parse:
 # the following was copied from https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-parse-sort.sh
@@ -75,6 +80,10 @@ rule make_pairs_with_pairtools_parse:
         """
         pairtools parse -c {params.chrom_sizes} --drop-sam --add-columns mapq --output {output.pairs} {input.bam}
         """
+
+##################################################################
+##             Sort and merge sequencing replicates             ##
+##################################################################
 
 if config["merge_as_sequencing_replicates"]:
     rule sort_pairs_with_pairtools_sort:
@@ -108,6 +117,11 @@ if config["merge_as_sequencing_replicates"]:
             pairtools merge --output results/sorted_pairs/{params.filename}_sorted.pairs.gz {params.sorted_pairs_list}
             rm results/temp_sorted_pairs/*.gz
             """
+
+##################################################################
+##          Sort without merging sequencing replicates          ##
+##################################################################
+
 else:
     rule sort_pairs_with_pairtools_sort:
         input:
@@ -126,6 +140,11 @@ else:
             pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {input.pairs}
             rm -rf {params.tempdir}
             """
+
+#################################################################
+##                      Remove duplicates                      ##
+#################################################################
+
 rule mark_duplicates_with_pairtools_dedup:
     input:
         sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
@@ -137,11 +156,6 @@ rule mark_duplicates_with_pairtools_dedup:
         pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
         pairix {output.marked_pairs}
         """
-
-## Insert run-pairsam-merge.sh when needed
-# https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-merge.sh    
-
-
 
 rule filter_pairs:
     input:
@@ -165,6 +179,10 @@ rule filter_pairs:
         rm {params.temp_file}
         """
 
+##################################################################
+##               Generate fragment map from pairs               ##
+##################################################################
+
 rule add_frag2Pairs:
     input:
         dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz"
@@ -180,6 +198,10 @@ rule add_frag2Pairs:
         bgzip -f {params.frag2_pairs_basename}
         pairix -f {output.frag2_pairs}
         """
+
+#################################################################
+##                 Generate .mcool Hi-C matrix                 ##
+#################################################################
 
 rule run_cooler:
     input:
