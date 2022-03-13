@@ -29,11 +29,11 @@ def fq_dict_from_sample(wildcards):
 if config["merge_as_sequencing_replicates"] or config["merge_as_biological_replicates"]:
     rule all:
         input:
-            expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample2=config["merged_sample_name"])
+            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=config["merged_sample_name"])
 else:
     rule all:
         input:
-            expand("results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool",sample2=samples_table.index)
+            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
 
 
         
@@ -86,7 +86,7 @@ if config["merge_as_sequencing_replicates"]:
             tempdir="results/{sample}_temp/",
             chrom_sizes=config["chrom_sizes"]
         output:
-            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"    
+            sorted_pairs="results/temp_sorted_pairs/{sample}_sorted.pairs.gz"    
         log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
         shell:
             """
@@ -96,27 +96,17 @@ if config["merge_as_sequencing_replicates"]:
             """
     rule merge_sequencing_replicates:
         input:
-            sorted_pairs=expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)
+            sorted_pairs=expand("results/temp_sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)
         output:
-            merged=expand("results/sorted_pairs/{sample2}_sorted.pairs.gz",sample2=config["merged_sample_name"])
+            merged=expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=config["merged_sample_name"])
         params:
             sorted_pairs_list=' '.join(expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)),
             filename=config["merged_sample_name"]
-        log: expand("results/logs/snakelogs/merge_sequencing_replicates.{sample2}.log",sample2=config["merged_sample_name"])
+        log: expand("results/logs/snakelogs/merge_sequencing_replicates.{sample}.log",sample=config["merged_sample_name"])
         shell:
             """
             pairtools merge --output results/sorted_pairs/{params.filename}_sorted.pairs.gz {params.sorted_pairs_list}
-            """
-    rule mark_duplicates_with_pairtools_dedup:
-        input:
-            sorted_pairs=expand("results/sorted_pairs/{sample2}_sorted.pairs.gz",sample2=config["merged_sample_name"])
-        output:
-            marked_pairs="results/marked_pairs/{sample2}.marked.pairs.gz"
-        log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample2}.log"
-        shell:
-            """
-            pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
-            pairix {output.marked_pairs}
+            rm results/temp_sorted_pairs/*.gz
             """
 else:
     rule sort_pairs_with_pairtools_sort:
@@ -128,25 +118,25 @@ else:
             tempdir="results/{sample}_temp/",
             chrom_sizes=config["chrom_sizes"]
         output:
-            sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"     
-        log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample2}.log"
+            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"     
+        log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
         shell:
             """
             [ -d {params.tempdir} ] || mkdir {params.tempdir}
             pairtools sort --nproc {params.nproc} --memory {params.memory} --tmpdir {params.tempdir} --output {output.sorted_pairs} {input.pairs}
             rm -rf {params.tempdir}
             """
-    rule mark_duplicates_with_pairtools_dedup:
-        input:
-            sorted_pairs="results/sorted_pairs/{sample2}_sorted.pairs.gz"
-        output:
-            marked_pairs="results/marked_pairs/{sample2}.marked.pairs.gz"
-        log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample2}.log"
-        shell:
-            """
-            pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
-            pairix {output.marked_pairs}
-            """
+rule mark_duplicates_with_pairtools_dedup:
+    input:
+        sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
+    output:
+        marked_pairs="results/marked_pairs/{sample}.marked.pairs.gz"
+    log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample}.log"
+    shell:
+        """
+        pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
+        pairix {output.marked_pairs}
+        """
 
 ## Insert run-pairsam-merge.sh when needed
 # https://github.com/4dn-dcic/docker-4dn-hic/blob/master/scripts/run-pairsam-merge.sh    
@@ -155,14 +145,14 @@ else:
 
 rule filter_pairs:
     input:
-        marked_pairs="results/marked_pairs/{sample2}.marked.pairs.gz"
+        marked_pairs="results/marked_pairs/{sample}.marked.pairs.gz"
     output:
-        dedup_pairs="results/filtered_pairs/{sample2}.dedup.pairs.gz",
-        unmapped="results/filtered_pairs/{sample2}.unmapped.pairs.gz"
+        dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz",
+        unmapped="results/filtered_pairs/{sample}.unmapped.pairs.gz"
     params:
-        temp_file="results/marked_pairs/{sample2}_temp.gz",
+        temp_file="results/marked_pairs/{sample}_temp.gz",
         chrom_sizes=config["chrom_sizes"]
-    log: "results/logs/snakelogs/filter_pairs.{sample2}.log"
+    log: "results/logs/snakelogs/filter_pairs.{sample}.log"
     shell:
         """
         # Select UU, UR, RU reads
@@ -177,13 +167,13 @@ rule filter_pairs:
 
 rule add_frag2Pairs:
     input:
-        dedup_pairs="results/filtered_pairs/{sample2}.dedup.pairs.gz"
+        dedup_pairs="results/filtered_pairs/{sample}.dedup.pairs.gz"
     output:
-        frag2_pairs="results/frag2_pairs/{sample2}.frag2pairs.pairs.gz"
+        frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz"
     params:
         restriction_file=config["juicer_RE_file"],
-        frag2_pairs_basename="results/frag2_pairs/{sample2}.frag2pairs.pairs"
-    log: "results/logs/snakelogs/add_frag2Pairs.{sample2}.log"
+        frag2_pairs_basename="results/frag2_pairs/{sample}.frag2pairs.pairs"
+    log: "results/logs/snakelogs/add_frag2Pairs.{sample}.log"
     shell:
         """
         gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
@@ -193,16 +183,16 @@ rule add_frag2Pairs:
 
 rule run_cooler:
     input:
-        frag2_pairs="results/frag2_pairs/{sample2}.frag2pairs.pairs.gz"
+        frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz"
     output:
-        cooler="results/cooler/{sample2}."+str(config["cooler_bin_size"])+".cool"
+        cooler="results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool"
     params:
         chrom_sizes=config["chrom_sizes"],
         cooler_bin_size=config["cooler_bin_size"],
         cooler_n_cores=config["cooler_n_cores"],
         cooler_max_split=config["cooler_max_split"],
-        cooler_tempchrsize="./{sample2}_tempchrsize"
-    log: "results/logs/snakelogs/run_cooler.{sample2}.log"
+        cooler_tempchrsize="./{sample}_tempchrsize"
+    log: "results/logs/snakelogs/run_cooler.{sample}.log"
     shell:
         """
         # use for all chromosomes and contigs
