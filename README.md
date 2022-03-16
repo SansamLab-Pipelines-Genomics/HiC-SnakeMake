@@ -225,7 +225,8 @@ sbatch \
 -p {cluster.partition} \
 --cpus-per-task {cluster.cpus-per-task}  \
 --mem {cluster.mem} \
---output {cluster.output}'"
+--output {cluster.output} \
+--constraint=westmere'"
 ```
 
 ### 8.  Check results, and when finished, exit environment.
