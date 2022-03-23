@@ -2,7 +2,7 @@
 ## Project Description:
 
 ## Table of contents:
-* [Description of individual steps in pipeline](https://github.com/SansamLab/Process_HiC_SnakeMake/edit/main/README.md#description-of-individual-steps-in-pipeline)
+* [Description of individual steps in pipeline](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#description-of-individual-steps-in-pipeline)
   * [1.  run_bwa_mem](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#1--run_bwa_mem)
   * [2.  make_pairs_with_pairtools_parse](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#2--make_pairs_with_pairtools_parse)
   * [3.  sort_pairs_with_pairtools_sort](https://github.com/SansamLab/Process_HiC_SnakeMake/blob/main/README.md#3--sort_pairs_with_pairtools_sort)
