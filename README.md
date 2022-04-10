@@ -1,6 +1,6 @@
 # HiC-SnakeMake
 ![Logo](https://github.com/SansamLab/HiC-SnakeMake/blob/main/HiCSnakemake2.png?raw=true)
-
+<img src="https://github.com/SansamLab/HiC-SnakeMake/blob/main/HiCSnakemake2.png?raw=true" alt="" width="200"/>
 ## Project Description:
 
 ## Table of contents:
