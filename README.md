@@ -1,4 +1,6 @@
 # HiC-SnakeMake
+[!Logo]()
+
 ## Project Description:
 
 ## Table of contents:
