@@ -1,4 +1,4 @@
-# Process_HiC_SnakeMake
+# HiC-SnakeMake
 ## Project Description:
 
 ## Table of contents:
