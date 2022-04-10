@@ -1,5 +1,6 @@
 # HiC-SnakeMake
 <img src="https://github.com/SansamLab/HiC-SnakeMake/blob/main/HiCSnakemake2.png?raw=true" alt="" width="300"/>
+
 ## Project Description:
 
 ## Table of contents:
