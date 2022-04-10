@@ -1,5 +1,5 @@
 # HiC-SnakeMake
-[!Logo]()
+[!Logo](https://github.com/SansamLab/HiC-SnakeMake/blob/main/HiCSnakemake2.png)
 
 ## Project Description:
 
