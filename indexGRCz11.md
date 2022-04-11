@@ -11,8 +11,12 @@ sbatch --wrap=\
 ```
 
 ### 3. Get primary sequences (non-Alts) and rename chromosomes
+```bash
 sbatch --wrap=\
 "zcat GCF_000002035.6_GRCz11_genomic.fna.gz | seqtk seq -l 3000000000 | grep Primary -A 1 | sed 's/>/>chrUn/g' | seqtk seq -l 100 | sed 's/^.*chromosome />chr/g' | sed 's/,.*$//g' | gzip > GCF_000002035.6_GRCz11_primary_genomic.fna.gz"
+```
 
 ### 4. Index primary genome with bwa
+```bash
 sbatch --mem 32G --wrap="bwa index GCF_000002035.6_GRCz11_primary_genomic.fna.gz"
+```
