@@ -1,7 +1,7 @@
 
 ### 1. Load necessary software
 ```bash
-ml seqtk bwa
+ml seqtk bwa python
 ```
 
 ### 2. Copy GRCz11 fasta to local directory
@@ -23,8 +23,6 @@ sbatch --mem 32G --wrap="bwa index GCF_000002035.6_GRCz11_primary_genomic.fna.gz
 
 ### 5. Make restriction enzyme file
 ```bash
-ml python
-
 # get script from repository
 wget https://raw.githubusercontent.com/SansamLab/HiC-SnakeMake/main/workflow/scripts/generate_site_positions.py
 
