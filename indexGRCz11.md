@@ -20,3 +20,22 @@ sbatch --wrap=\
 ```bash
 sbatch --mem 32G --wrap="bwa index GCF_000002035.6_GRCz11_primary_genomic.fna.gz"
 ```
+
+### 5. Make restriction enzyme file
+```bash
+ml python
+
+# get script from repository
+wget https://raw.githubusercontent.com/SansamLab/HiC-SnakeMake/main/workflow/scripts/generate_site_positions.py
+
+# unzip fasta
+sbatch --mem 16G --wrap=\
+"gunzip bwa index GCF_000002035.6_GRCz11_primary_genomic.fna.gz"
+
+# run script
+sbatch --mem 24G --wrap=\
+"python generate_site_positions.py \
+'HindIII' \
+'GRCz11' \
+'GCF_000002035.6_GRCz11_primary_genomic.fna'"
+```
