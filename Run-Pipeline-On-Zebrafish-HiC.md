@@ -37,8 +37,7 @@ mkdir fastqs
 cd fastqs
 # transfer each pair of files for the following SRR entries. 
 # In this example we use "sbatch --wrap" to run the fasterq-dump command on our hpc.
-SRAIDS=( "SRR4036047" \
-"SRR12008033" \
+SRAIDS=( "SRR12008033" \
 "SRR12008034" )
 for t in ${SRAIDS[@]}; do
   sbatch --cpus-per-task 12 --wrap="fasterq-dump --split-files --threads 12 $t"
