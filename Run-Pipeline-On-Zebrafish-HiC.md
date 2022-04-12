@@ -68,17 +68,14 @@ sbatch --mem 24G --wrap=\
 'GCF_000002035.6_GRCz11_primary_genomic.fna'"
 ```
 
-
-
-
 ### 2.  Transfer .fastq files from SRA.
-This pipeline lacks the functionality to do this. We recommend using the fasterq-dump to transfer the files from SRA. In this example, we create a directory in which the .fastq files are transferred to a subdirectory called "fastqs". The locations of the .fastq files defined in the "Siefert_Samples.csv" provided in this repo as "../fastqs/SRR4036047_1.fastq".
+This pipeline lacks the functionality to do this. We recommend using the fasterq-dump to transfer the files from SRA. In this example, we create a directory in which the .fastq files are transferred to a subdirectory called "fastqs". The locations of the .fastq files defined in the "McGarvey2022.csv" provided in this repo as "../fastqs/SRR4036047_1.fastq".
 
 ```bash
 # load the module with fasterq-dump. note:  this will likely differ on your system
 ml ncbi_sra
 # create directory for the entire snakemake run
-cd McGarvey2022/
+cd McGarvey2022_HiC_Analysis/
 # create a subdirectory to which the .fastq files will be transferred
 mkdir fastqs
 cd fastqs
@@ -89,7 +86,7 @@ SRAIDS=( "SRR12008033" \
 for t in ${SRAIDS[@]}; do
   sbatch --cpus-per-task 12 --wrap="fasterq-dump --split-files --threads 12 $t"
   done
-# change back to the McGarvey2022/ directory
+# change back to the McGarvey2022_HiC_Analysis/ directory
 cd ..
 ```
 
