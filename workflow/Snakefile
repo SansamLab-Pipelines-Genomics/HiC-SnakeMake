@@ -47,8 +47,11 @@ rule run_bwa_mem:
         bwaThreads=config["bwa_threads"]
     output:
         bam="results/aligned/{sample}.bam"
-    #conda:
-    #    "envs/qc_trim_align.yml"
+    envmodules:
+        "bwa/0.7.15",
+        "samtools/1.14"
+    conda:
+        "envs/HiCSnakemake.yml"
     log: "results/logs/snakelogs/run_bwa_mem.{sample}.log"
     shell:
         """
@@ -75,6 +78,10 @@ rule make_pairs_with_pairtools_parse:
         chrom_sizes=config["chrom_sizes"]
     output:
         pairs="results/pairs/{sample}_pairs.gz"
+    envmodules:
+        "pairtools/0.3.0"
+    conda:
+        "envs/HiCSnakemake.yml"
     log: "results/logs/snakelogs/make_pairs_with_pairtools_parse.{sample}.log"
     shell:
         """
@@ -95,7 +102,11 @@ if config["merge_as_sequencing_replicates"]:
             tempdir="results/{sample}_temp/",
             chrom_sizes=config["chrom_sizes"]
         output:
-            sorted_pairs="results/temp_sorted_pairs/{sample}_sorted.pairs.gz"    
+            sorted_pairs="results/temp_sorted_pairs/{sample}_sorted.pairs.gz" 
+        envmodules:
+            "pairtools/0.3.0"
+        conda:
+            "envs/HiCSnakemake.yml"
         log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
         shell:
             """
@@ -108,6 +119,10 @@ if config["merge_as_sequencing_replicates"]:
             sorted_pairs=expand("results/temp_sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)
         output:
             merged=expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=config["merged_sample_name"])
+        envmodules:
+            "pairtools/0.3.0"
+        conda:
+            "envs/HiCSnakemake.yml"
         params:
             sorted_pairs_list=' '.join(expand("results/temp_sorted_pairs/{sample}_sorted.pairs.gz",sample=samples_table.index)),
             filename=config["merged_sample_name"]
@@ -132,7 +147,11 @@ else:
             tempdir="results/{sample}_temp/",
             chrom_sizes=config["chrom_sizes"]
         output:
-            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"     
+            sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
+        envmodules:
+            "pairtools/0.3.0"
+        conda:
+            "envs/HiCSnakemake.yml"
         log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
         shell:
             """
@@ -151,6 +170,11 @@ rule mark_duplicates_with_pairtools_dedup:
     output:
         marked_pairs="results/marked_pairs/{sample}.marked.pairs.gz"
     log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample}.log"
+    envmodules:
+        "pairtools/0.3.0",
+        "pairix/0.3.7"
+    conda:
+        "envs/HiCSnakemake.yml"
     shell:
         """
         pairtools dedup --mark-dups --output-dups - --output-unmapped - --output {output.marked_pairs} {input.sorted_pairs}
@@ -167,6 +191,11 @@ rule filter_pairs:
         temp_file="results/marked_pairs/{sample}_temp.gz",
         chrom_sizes=config["chrom_sizes"]
     log: "results/logs/snakelogs/filter_pairs.{sample}.log"
+    envmodules:
+        "pairtools/0.3.0",
+        "pairix/0.3.7"
+    conda:
+        "envs/HiCSnakemake.yml"
     shell:
         """
         # Select UU, UR, RU reads
@@ -193,6 +222,12 @@ if config["merge_as_biological_replicates"]:
             restriction_file=config["juicer_RE_file"],
             frag2_pairs_basename="results/temp_frag2_pairs/{sample}.frag2pairs.pairs"
         log: "results/logs/snakelogs/add_frag2Pairs.{sample}.log"
+        envmodules:
+            "python/3.7.0",
+            "pairtools/0.3.0",
+            "pairix/0.3.7"
+        conda:
+            "envs/HiCSnakemake.yml"
         shell:
             """
             gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
@@ -208,6 +243,9 @@ if config["merge_as_biological_replicates"]:
             frag2_pairs_list=' '.join(expand("results/temp_frag2_pairs/{sample}.frag2pairs.pairs.gz",sample=samples_table.index)),
             filename=config["merged_sample_name"]
         log: expand("results/logs/snakelogs/merge_biological_replicates.{sample}.log",sample=config["merged_sample_name"])
+        envmodules:
+            "pairtools/0.3.0",
+            "pairix/0.3.7"
         shell:
             """
             pairtools merge --output results/frag2_pairs/{params.filename}.frag2pairs.pairs.gz {params.frag2_pairs_list}
@@ -229,6 +267,11 @@ else:
             restriction_file=config["juicer_RE_file"],
             frag2_pairs_basename="results/frag2_pairs/{sample}.frag2pairs.pairs"
         log: "results/logs/snakelogs/add_frag2Pairs.{sample}.log"
+        envmodules:
+            "pairtools/0.3.0",
+            "pairix/0.3.7"
+        conda:
+            "envs/HiCSnakemake.yml"
         shell:
             """
             gunzip -ck {input.dedup_pairs} | workflow/scripts/fragment_4dnpairs.pl -a - {params.frag2_pairs_basename} {params.restriction_file}
@@ -252,6 +295,11 @@ rule run_cooler:
         cooler_max_split=config["cooler_max_split"],
         cooler_tempchrsize="./{sample}_tempchrsize"
     log: "results/logs/snakelogs/run_cooler.{sample}.log"
+    envmodules:
+            "cooler/0.8.11",
+            "pairix/0.3.7"
+    conda:
+        "envs/HiCSnakemake.yml"
     shell:
         """
         # use for all chromosomes and contigs
