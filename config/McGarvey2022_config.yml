@@ -1,17 +1,17 @@
 # path to samples table
-samples_table: "config/testSamples.csv"
+samples_table: "config/McGarvey2022_samples.csv"
 # location of bwa indexed genome for the alignment
-bwa_genome: "/Volumes/hts_core/Shared/zebrafish/danRer11/noAlts/danRer11_noAlts.fa"
+bwa_genome: "../GRCz11/GCF_000002035.6_GRCz11_primary_genomic.fna"
 # number of threads to use for bwa-mem alignment
 bwa_threads: 12
 # location of chromosome sizes file (see example in resources folder)
-chrom_sizes: "resources/chromosomeSizes/danRer11.chrom.sizes.modified"
+chrom_sizes: "../GRCz11/GCF_000002035.6_GRCz11_primary_genomic.sizes"
 # number of processors to use when sorting the pairs file
 pairtools_sort_nproc:  8
 # gigabytes of memory (##G) to use when sorting the pairs file
 pairtools_memory:  "96G"
 # path and name of juicer style restriction enzyme file
-juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
+juicer_RE_file: "../GRCz11/GRCz11_HindIII.txt"
 # bin size for .cool file
 cooler_bin_size: 10000
 # number of cores to use when generating the .cool file
