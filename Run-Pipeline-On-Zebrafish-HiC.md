@@ -100,9 +100,9 @@ ml miniconda/4.11.0
 ### 4.  Clone repository
 ```bash
 cd McGarvey2022_HiC_Analysis
-git clone https://github.com/SansamLab/RepliTimer.git
+git clone https://github.com/SansamLab/HiC-SnakeMake.git
 # rename folder with project name
-mv RepliTimer/ McGarvey2022_HiC_Project_Folder/
+mv HiC-SnakeMake/ McGarvey2022_HiC_Project_Folder/
 # change directory into root of your project folder
 cd McGarvey2022_HiC_Project_Folder
 ```
