@@ -68,6 +68,11 @@ sbatch --mem 24G --wrap=\
 'GCF_000002035.6_GRCz11_primary_genomic.fna'"
 ```
 
+#### 1.3.6. Make chromosome sizes file from genome fasta
+```bash
+zcat GCF_000002035.6_GRCz11_primary_genomic.fna.gz | awk '$0 ~ ">" {if (NR > 1) {print c;} c=0;printf substr($0,2,100) "\t"; } $0 !~ ">" {c+=length($0);} END { print c; }' > GCF_000002035.6_GRCz11_primary_genomic.sizes
+```
+
 ### 2.  Transfer .fastq files from SRA.
 This pipeline lacks the functionality to do this. We recommend using the fasterq-dump to transfer the files from SRA. In this example, we create a directory in which the .fastq files are transferred to a subdirectory called "fastqs". The locations of the .fastq files defined in the "McGarvey2022.csv" provided in this repo as "../fastqs/SRR4036047_1.fastq".
 
