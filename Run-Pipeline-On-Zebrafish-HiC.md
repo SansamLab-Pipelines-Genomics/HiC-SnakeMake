@@ -99,6 +99,7 @@ ml miniconda/4.11.0
 ```
 ### 4.  Clone repository
 ```bash
+McGarvey2022_HiC_Analysis
 git clone https://github.com/SansamLab/RepliTimer.git
 # rename folder with project name
 mv RepliTimer/ McGarvey2022_HiC_Project_Folder/
