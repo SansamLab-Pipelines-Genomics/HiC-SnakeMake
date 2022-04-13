@@ -1,0 +1,3 @@
+sample,fastq1,fastq2
+ZFishHiC1,../fastqs/SRR12008033_1.fastq,../fastqs/SRR12008033_2.fastq
+ZFishHiC2,../fastqs/SRR12008034_1.fastq,../fastqs/SRR12008034_2.fastq
