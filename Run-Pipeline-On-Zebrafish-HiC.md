@@ -99,6 +99,7 @@ cd ..
 Note. The commands to do this will be different on your machine. These commands are specific to an HPC with slurm and miniconda modules installed.
 
 ```bash
+module purge
 ml slurm/20.02
 ml miniconda/4.11.0
 ```
@@ -126,6 +127,8 @@ sbatch --mem 16G --wrap="conda env create -f workflow/envs/SnakemakeEnv.yml -p .
 ```bash
 # minimize conflicts, close all modules on slurm
 module purge
+ml slurm/20.02
+ml miniconda/4.11.0
 # activate the Snakemake Environment
 conda activate ../SnakemakeEnv/
 ```
