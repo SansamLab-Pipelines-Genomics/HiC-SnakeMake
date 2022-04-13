@@ -119,12 +119,15 @@ cd McGarvey2022_HiC_Project_Folder
 # -f is the location of the environment .yml file. 
 ## The relative path assumes that you are in the root directory of this repository.
 # -p is the path where you want to install this environment
-sbatch --mem 16G --wrap="conda env create -f workflow/envs/SnakemakeEnv.yml -p SnakemakeEnv" 
+sbatch --mem 16G --wrap="conda env create -f workflow/envs/SnakemakeEnv.yml -p ../SnakemakeEnv" 
 ```
 
 #### 5.2.  Activate the snakemake conda environment
 ```bash
-conda activate SnakemakeEnv/
+# minimize conflicts, close all modules on slurm
+module purge
+# activate the Snakemake Environment
+conda activate ../SnakemakeEnv/
 ```
 
 ### 6. Modify the job-specific configuration files.
