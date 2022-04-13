@@ -130,12 +130,14 @@ conda activate SnakemakeEnv/
 ### 6. Modify the job-specific configuration files.
 
 #### 6.1. Modify the config/config.yml file
-The config.yml file is preconfigured for the test data set, so the path to the .csv file must be changed.
-![Config File Image](https://github.com/SansamLab/RepliTimer/blob/main/resources/SiefertSamplesTableImage.png)
+The config.yml file is preconfigured for the test data set, so the file must be changed. A config file for the McGarvey data is included in this repository. To use that file rename it "config.yml".
+```bash
+rm config/config.yml
+mv config/McGarvey2022_config.yml config/config.yml
+```
 
 #### 6.2. Modify the config/McGarvey_Samples.csv file
-The McGarvey_Samples.csv file in the config folder has relative paths to the fastq files transferred from SRA. If the path differs in your system update it in Siefert_Samples.csv.
-![Sample Table Image](https://github.com/SansamLab/RepliTimer/blob/main/resources/SiefertSamplesImage.png)
+The McGarvey_Samples.csv file in the config folder has relative paths to the fastq files transferred from SRA. If the path differs in your system update it in McGarvey_Samples.csv.
 
 ### 7A. Run pipeline with conda environments (Alternative 1)
 #### 7A.1. Install necessary conda environments
