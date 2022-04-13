@@ -153,7 +153,7 @@ sbatch --mem 32G \
 snakemake \
 --cores all \
 --use-conda \
---conda-prefix condEnvs/ \
+--conda-prefix ../condEnvs/ \
 --conda-create-envs-only \
 --conda-frontend conda"
 ```
@@ -166,7 +166,7 @@ snakemake \
 -R \
 -j 999 \
 --use-conda \
---conda-prefix condEnvs/ \
+--conda-prefix ../condEnvs/ \
 --conda-frontend conda \
 --latency-wait 100 \
 --cluster-config config/cluster_config.yml \
