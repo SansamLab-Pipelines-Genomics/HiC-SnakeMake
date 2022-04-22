@@ -49,7 +49,8 @@ rule run_bwa_mem:
         bam="results/aligned/{sample}.bam"
     envmodules:
         "bwa/0.7.15",
-        "samtools/1.14"
+        "samtools/1.14",
+        "pbgzip/default"
     conda:
         "envs/HiCSnakemake.yml"
     log: "results/logs/snakelogs/run_bwa_mem.{sample}.log"
@@ -79,7 +80,8 @@ rule make_pairs_with_pairtools_parse:
     output:
         pairs="results/pairs/{sample}_pairs.gz"
     envmodules:
-        "pairtools/0.3.0"
+        "pairtools/0.3.0",
+        "pbgzip/default"
     conda:
         "envs/HiCSnakemake.yml"
     log: "results/logs/snakelogs/make_pairs_with_pairtools_parse.{sample}.log"
@@ -104,7 +106,8 @@ if config["merge_as_sequencing_replicates"]:
         output:
             sorted_pairs="results/temp_sorted_pairs/{sample}_sorted.pairs.gz" 
         envmodules:
-            "pairtools/0.3.0"
+            "pairtools/0.3.0",
+            "pbgzip/default"
         conda:
             "envs/HiCSnakemake.yml"
         log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
@@ -120,7 +123,8 @@ if config["merge_as_sequencing_replicates"]:
         output:
             merged=expand("results/sorted_pairs/{sample}_sorted.pairs.gz",sample=config["merged_sample_name"])
         envmodules:
-            "pairtools/0.3.0"
+            "pairtools/0.3.0",
+            "pbgzip/default"
         conda:
             "envs/HiCSnakemake.yml"
         params:
@@ -149,7 +153,8 @@ else:
         output:
             sorted_pairs="results/sorted_pairs/{sample}_sorted.pairs.gz"
         envmodules:
-            "pairtools/0.3.0"
+            "pairtools/0.3.0",
+            "pbgzip/default"
         conda:
             "envs/HiCSnakemake.yml"
         log: "results/logs/snakelogs/sort_pairs_with_pairtools_sort.{sample}.log"
@@ -172,7 +177,8 @@ rule mark_duplicates_with_pairtools_dedup:
     log: "results/logs/snakelogs/mark_duplicates_with_pairtools_dedup.{sample}.log"
     envmodules:
         "pairtools/0.3.0",
-        "pairix/0.3.7"
+        "pairix/0.3.7",
+        "pbgzip/default"
     conda:
         "envs/HiCSnakemake.yml"
     shell:
@@ -193,7 +199,8 @@ rule filter_pairs:
     log: "results/logs/snakelogs/filter_pairs.{sample}.log"
     envmodules:
         "pairtools/0.3.0",
-        "pairix/0.3.7"
+        "pairix/0.3.7",
+        "pbgzip/default"
     conda:
         "envs/HiCSnakemake.yml"
     shell:
@@ -225,7 +232,8 @@ if config["merge_as_biological_replicates"]:
         envmodules:
             "python/3.7.0",
             "pairtools/0.3.0",
-            "pairix/0.3.7"
+            "pairix/0.3.7",
+            "pbgzip/default"
         conda:
             "envs/HiCSnakemake.yml"
         shell:
@@ -245,7 +253,8 @@ if config["merge_as_biological_replicates"]:
         log: expand("results/logs/snakelogs/merge_biological_replicates.{sample}.log",sample=config["merged_sample_name"])
         envmodules:
             "pairtools/0.3.0",
-            "pairix/0.3.7"
+            "pairix/0.3.7",
+            "pbgzip/default"
         shell:
             """
             pairtools merge --output results/frag2_pairs/{params.filename}.frag2pairs.pairs.gz {params.frag2_pairs_list}
@@ -269,7 +278,8 @@ else:
         log: "results/logs/snakelogs/add_frag2Pairs.{sample}.log"
         envmodules:
             "pairtools/0.3.0",
-            "pairix/0.3.7"
+            "pairix/0.3.7",
+            "pbgzip/default"
         conda:
             "envs/HiCSnakemake.yml"
         shell:
@@ -297,7 +307,8 @@ rule run_cooler:
     log: "results/logs/snakelogs/run_cooler.{sample}.log"
     envmodules:
             "cooler/0.8.11",
-            "pairix/0.3.7"
+            "pairix/0.3.7",
+            "pbgzip/default"
     conda:
         "envs/HiCSnakemake.yml"
     shell:
