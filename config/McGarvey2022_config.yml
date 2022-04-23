@@ -27,3 +27,4 @@ merged_sample_name: "SRR12008033_4"
 # memory and number of processors for pairtools merge
 pairtools_merge_memory: "64G"
 pairtools_merge_nproc: 8
+juicer_pre_nproc: 8
