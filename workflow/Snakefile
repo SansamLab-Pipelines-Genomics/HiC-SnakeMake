@@ -29,11 +29,14 @@ def fq_dict_from_sample(wildcards):
 if config["merge_as_sequencing_replicates"] or config["merge_as_biological_replicates"]:
     rule all:
         input:
-            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=config["merged_sample_name"])
+            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=config["merged_sample_name"]),
+            expand("results/hic/{sample}.hic",sample=config["merged_sample_name"]),
 else:
     rule all:
         input:
-            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index)
+            expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index),
+            expand("results/hic/{sample}.hic",sample=samples_table.index),
+
 
 #################################################################
 ##                    Align reads to genome                    ##
@@ -320,3 +323,25 @@ rule run_cooler:
         cooler cload pairix -p {params.cooler_n_cores} -s {params.cooler_max_split} {params.cooler_tempchrsize}:{params.cooler_bin_size} {input.frag2_pairs} {output.cooler}
         """
 
+#################################################################
+##                 Generate .hic Hi-C matrix                   ##
+#################################################################
+
+rule run_juicebox_pre:
+    input:
+        frag2_pairs="results/frag2_pairs/{sample}.frag2pairs.pairs.gz",
+    output:
+        hic_file="results/hic/{sample}.hic",
+    params:
+        chrom_sizes=config["chrom_sizes"],
+        custom_resolutions="5000,10000,25000,50000,100000,500000,1000000",
+        nproc=config["juicer_pre_nproc"],
+        mapQ_minimum=30,
+    log: "results/logs/snakelogs/run_juicebox.{sample}.log"
+    envmodules:
+        "juicer/1.6.2",
+        "java/amazon-corretto/11.0.7.10.1"
+    shell:
+        """
+        juicer_tools pre -r {params.custom_resolutions} -j {params.nproc} -q {params.mapQ_minimum} {input.frag2_pairs} {output.hic_file} {params.chrom_sizes}
+        """
