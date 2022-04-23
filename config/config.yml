@@ -13,7 +13,7 @@ pairtools_memory:  "96G"
 # path and name of juicer style restriction enzyme file
 juicer_RE_file: "resources/juicer_RE_files/zrgz11_HindIII.txt"
 # bin size for .cool file
-cooler_bin_size: 10000
+cooler_bin_size: 1000
 # number of cores to use when generating the .cool file
 cooler_n_cores: 12
 # maximum number of splits of chromosome when generating the .cool file
