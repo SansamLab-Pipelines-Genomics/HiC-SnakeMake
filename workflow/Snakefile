@@ -31,6 +31,7 @@ if config["merge_as_sequencing_replicates"] or config["merge_as_biological_repli
         input:
             expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=config["merged_sample_name"]),
             expand("results/hic/{sample}.hic",sample=config["merged_sample_name"]),
+            expand("results/compartments/{sample}.gz",sample=config["merged_sample_name"]),
 else:
     rule all:
         input:
