@@ -367,7 +367,7 @@ rule run_juicebox_eigenvector:
         "java/amazon-corretto/11.0.7.10.1"
     shell:
         """
-        cat {params.chrom_sizes} | parallel --colsep='\t' juicer_tools eigenvector {params.normalization} {input.hic_file} {{1}} BP {params.resolution} results/compartments/{params.sampleName}_eigen_{{1}}.txt
+        head {params.chrom_sizes} | parallel --colsep='\t' juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{1}} BP {params.resolution} results/compartments/{params.sampleName}_eigen_{{1}}.txt
         gzip {params.sampleName}_eigen_* > {output.compartment_file}
         """
 
