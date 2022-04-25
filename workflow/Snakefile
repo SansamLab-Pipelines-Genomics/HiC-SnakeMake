@@ -364,7 +364,8 @@ rule run_juicebox_eigenvector:
     log: "results/logs/snakelogs/run_juicebox.{sample}.log"
     envmodules:
         "juicer/1.6.2",
-        "java/amazon-corretto/11.0.7.10.1"
+        "java/amazon-corretto/11.0.7.10.1",
+        "bedtools/2.30.0",
     shell:
         """
         zcat {params.chrom_sizes} | parallel --colsep='\t' juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{1}} BP {params.resolution} results/compartments/{params.sampleName}_eigen_{{1}}.txt
