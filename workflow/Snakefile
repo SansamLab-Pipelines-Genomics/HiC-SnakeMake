@@ -353,14 +353,14 @@ rule run_juicebox_pre:
 
 rule run_juicebox_eigenvector:
     input:
-        hic_file="results/hic/{sample}.hic",
+        hic_file="results/hic/{sample}.hic"
     output:
-        compartment_file="results/compartments/{sample}.gz",
+        compartment_file="results/compartments/{sample}.gz"
     params:
         resolution=config["juicer_eigenvector_resolution"],
         chrom_sizes=config["chrom_sizes"],
         normalization=config["juicer_eigenvector_normalization"],
-        sampleName="{sample}",
+        sampleName="{sample}"
     log: "results/logs/snakelogs/run_juicebox.{sample}.log"
     envmodules:
         "juicer/1.6.2",
