@@ -28,3 +28,7 @@ merged_sample_name: "SRR12008033_4"
 pairtools_merge_memory: "64G"
 pairtools_merge_nproc: 8
 juicer_pre_nproc: 8
+# select the resolution (bp) for detecting compartments
+juicer_eigenvector_resolution: 100000
+# select the normalization method used for detecting compartments (NONE/VC/VC_SQRT/KR)
+juicer_eigenvector_normalization: "KR"
