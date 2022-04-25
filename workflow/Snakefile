@@ -369,10 +369,8 @@ rule run_juicebox_eigenvector:
     shell:
         """
         cat {params.chrom_sizes} | parallel --colsep='\t' juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{1}} BP {params.resolution} results/compartments/{params.sampleName}_eigen_{{1}}.txt
-        cat {params.chrom_sizes} | parallel --colsep='\t' echo -e '{{1}}\t0\t{{2}}'|bedtools makewindows -b stdin -w {params.resolution} > {params.sampleName}_eigen_{{1}}.bed
-        cat {params.chrom_sizes} | parallel --colsep='\t' echo -e '{{1}}\t0\t{{2}}'|paste {params.sampleName}_eigen_{{1}}.bed {params.sampleName}_eigen_{{1}}.txt > {params.sampleName}_eigen_{{1}}.bedgraph
-        rm results/compartments/{params.sampleName}_eigen_*.txt
-        rm results/compartments/{params.sampleName}_eigen_*.bed
+        cat {params.chrom_sizes} | parallel --colsep='\t' bedtools makewindows -g {params.chrom_sizes} -w {params.resolution} > {params.sampleName}_eigen_{{1}}.bed
+        cat {params.chrom_sizes} | parallel --colsep='\t' paste {params.sampleName}_eigen_{{1}}.bed {params.sampleName}_eigen_{{1}}.txt > {params.sampleName}_eigen_{{1}}.bedgraph
         gzip results/compartments/{params.sampleName}_eigen*.bedgraph > {output.compartment_file}
         """
 
