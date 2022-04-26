@@ -390,10 +390,10 @@ rule run_juicebox_arrowhead:
     input:
         hic_file="results/hic/{sample}.hic"
     output:
-        "results/{sample}/TADs/5000_blocks.bedpe",
-        "results/{sample}/TADs/10000_blocks.bedpe",
-        "results/{sample}/TADs/25000_blocks.bedpe",
-        "results/{sample}/TADs/50000_blocks.bedpe",
+        "results/TADs/{sample}/5000_blocks.bedpe",
+        "results/TADs/{sample}/10000_blocks.bedpe",
+        "results/TADs/{sample}/25000_blocks.bedpe",
+        "results/TADs/{sample}/50000_blocks.bedpe",
     params:
         threads=config["juicer_arrowhead_threads"],
         normalization=config["juicer_arrowhead_normalization"],
@@ -406,9 +406,9 @@ rule run_juicebox_arrowhead:
     shell:
         """
         # run at multiple resolutions:  5kb, 10kb, 25kb, and 50kb
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/{params.outputDirectory}/TADs
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/{params.outputDirectory}/TADs
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/{params.outputDirectory}/TADs
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/{params.outputDirectory}/TADs
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/TADs/{params.outputDirectory}
         """
 
