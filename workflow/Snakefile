@@ -370,6 +370,7 @@ rule run_juicebox_eigenvector:
     shell:
         """
         chromosomes=($(echo {params.chromosomes} | tr "," "\n"))
+        mkdir results/compartments/temp_{params.sampleName}/
         grep ${{chromosomes[@]/#/-e }} {params.chrom_sizes} | sort | uniq > results/compartments/temp_{params.sampleName}/chromosome.sizes
         bedtools makewindows -g results/compartments/temp_{params.sampleName}/chromosome.sizes -w {params.resolution} > results/compartments/temp_{params.sampleName}/{params.resolution}_windows.bed
         parallel juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{.}} BP {params.resolution} results/compartments/temp_{params.sampleName}/{params.sampleName}_eigen_{{.}}.txt ::: ${{chromosomes[@]}}
