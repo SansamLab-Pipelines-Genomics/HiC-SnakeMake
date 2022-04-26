@@ -38,3 +38,4 @@ juicer_eigenvector_chromosomes: "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,ch
 juicer_arrowhead_threads: 12
 #select the normalization method used for detecting TADs (NONE/VC/VC_SQRT/KR)
 juicer_arrowhead_normalization: "KR"
+juicer_arrowhead_sliding_window: 2000
