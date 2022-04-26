@@ -368,10 +368,10 @@ rule run_juicebox_eigenvector:
         "bedtools/2.30.0",
     shell:
         """
-        bedtools makewindows -g {params.chrom_sizes} -w {params.resolution} > {params.resolution}_windows.bed
+        bedtools makewindows -g {params.chrom_sizes} -w {params.resolution} > results/compartments/{params.resolution}_windows.bed
         cat {params.chrom_sizes} | parallel --colsep='\t' juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{1}} BP {params.resolution} results/compartments/{params.sampleName}_eigen_{{1}}.txt
-        cat {params.chrom_sizes} | parallel --colsep='\t' grep {{1}} {params.resolution}_windows.bed > {params.sampleName}_eigen_{{1}}.bed
-        cat {params.chrom_sizes} | parallel --colsep='\t' paste {params.sampleName}_eigen_{{1}}.bed {params.sampleName}_eigen_{{1}}.txt > {params.sampleName}_eigen_{{1}}.bedgraph
+        cat {params.chrom_sizes} | parallel --colsep='\t' grep {{1}} results/compartments/{params.resolution}_windows.bed > results/compartments/{params.sampleName}_eigen_{{1}}.bed
+        cat {params.chrom_sizes} | parallel --colsep='\t' paste results/compartments/{params.sampleName}_eigen_{{1}}.bed results/compartments/{params.sampleName}_eigen_{{1}}.txt > results/compartments/{params.sampleName}_eigen_{{1}}.bedgraph
         gzip results/compartments/{params.sampleName}_eigen*.bedgraph > {output.compartment_file}
         """
 
