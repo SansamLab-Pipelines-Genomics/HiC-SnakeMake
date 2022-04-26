@@ -453,7 +453,7 @@ rule run_juicebox_arrowhead_50kb:
     input:
         hic_file="results/hic/{sample}.hic"
     output:
-        "results/TADs/{sample}/25000_blocks.bedpe",
+        "results/TADs/{sample}/50000_blocks.bedpe",
     params:
         threads=config["juicer_arrowhead_threads"],
         normalization=config["juicer_arrowhead_normalization"],
