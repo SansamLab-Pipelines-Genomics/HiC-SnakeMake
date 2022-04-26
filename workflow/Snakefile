@@ -33,12 +33,18 @@ if config["merge_as_sequencing_replicates"] or config["merge_as_biological_repli
             expand("results/hic/{sample}.hic",sample=config["merged_sample_name"]),
             expand("results/compartments/{sample}.gz",sample=config["merged_sample_name"]),
             expand("results/TADs/{sample}/5000_blocks.bedpe",sample=config["merged_sample_name"]),
+            expand("results/TADs/{sample}/10000_blocks.bedpe",sample=config["merged_sample_name"]),
+            expand("results/TADs/{sample}/25000_blocks.bedpe",sample=config["merged_sample_name"]),
+            expand("results/TADs/{sample}/50000_blocks.bedpe",sample=config["merged_sample_name"]),
 else:
     rule all:
         input:
             expand("results/cooler/{sample}."+str(config["cooler_bin_size"])+".cool",sample=samples_table.index),
             expand("results/hic/{sample}.hic",sample=samples_table.index),
             expand("results/TADs/{sample}/5000_blocks.bedpe",sample=samples_table.index),
+            expand("results/TADs/{sample}/10000_blocks.bedpe",sample=samples_table.index),
+            expand("results/TADs/{sample}/25000_blocks.bedpe",sample=samples_table.index),
+            expand("results/TADs/{sample}/50000_blocks.bedpe",sample=samples_table.index),
 
 
 #################################################################
@@ -386,29 +392,79 @@ rule run_juicebox_eigenvector:
 ##                        Identify TADs                        ##
 #################################################################
 
-rule run_juicebox_arrowhead:
+rule run_juicebox_arrowhead_5kb:
     input:
         hic_file="results/hic/{sample}.hic"
     output:
         "results/TADs/{sample}/5000_blocks.bedpe",
-        "results/TADs/{sample}/10000_blocks.bedpe",
-        "results/TADs/{sample}/25000_blocks.bedpe",
-        "results/TADs/{sample}/50000_blocks.bedpe",
     params:
         threads=config["juicer_arrowhead_threads"],
         normalization=config["juicer_arrowhead_normalization"],
         sliding_window=config["juicer_arrowhead_sliding_window"],
         outputDirectory="{sample}",
+        resolution=5000
     log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
     envmodules:
         "juicer/1.6.2",
         "java/amazon-corretto/11.0.7.10.1",
     shell:
         """
-        # run at multiple resolutions:  5kb, 10kb, 25kb, and 50kb
-        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r {params.resolution} {input.hic_file} results/TADs/{params.outputDirectory}
         """
-
+rule run_juicebox_arrowhead_10kb:
+    input:
+        hic_file="results/hic/{sample}.hic"
+    output:
+        "results/TADs/{sample}/10000_blocks.bedpe",
+    params:
+        threads=config["juicer_arrowhead_threads"],
+        normalization=config["juicer_arrowhead_normalization"],
+        sliding_window=config["juicer_arrowhead_sliding_window"],
+        outputDirectory="{sample}",
+        resolution=10000
+    log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
+    envmodules:
+        "juicer/1.6.2",
+        "java/amazon-corretto/11.0.7.10.1",
+    shell:
+        """
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r {params.resolution} {input.hic_file} results/TADs/{params.outputDirectory}
+        """
+rule run_juicebox_arrowhead_25kb:
+    input:
+        hic_file="results/hic/{sample}.hic"
+    output:
+        "results/TADs/{sample}/25000_blocks.bedpe",
+    params:
+        threads=config["juicer_arrowhead_threads"],
+        normalization=config["juicer_arrowhead_normalization"],
+        sliding_window=config["juicer_arrowhead_sliding_window"],
+        outputDirectory="{sample}",
+        resolution=25000
+    log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
+    envmodules:
+        "juicer/1.6.2",
+        "java/amazon-corretto/11.0.7.10.1",
+    shell:
+        """
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r {params.resolution} {input.hic_file} results/TADs/{params.outputDirectory}
+        """
+rule run_juicebox_arrowhead_50kb:
+    input:
+        hic_file="results/hic/{sample}.hic"
+    output:
+        "results/TADs/{sample}/25000_blocks.bedpe",
+    params:
+        threads=config["juicer_arrowhead_threads"],
+        normalization=config["juicer_arrowhead_normalization"],
+        sliding_window=config["juicer_arrowhead_sliding_window"],
+        outputDirectory="{sample}",
+        resolution=50000
+    log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
+    envmodules:
+        "juicer/1.6.2",
+        "java/amazon-corretto/11.0.7.10.1",
+    shell:
+        """
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r {params.resolution} {input.hic_file} results/TADs/{params.outputDirectory}
+        """
