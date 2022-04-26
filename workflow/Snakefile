@@ -376,7 +376,7 @@ rule run_juicebox_eigenvector:
         parallel juicer_tools eigenvector -p {params.normalization} {input.hic_file} {{.}} BP {params.resolution} results/compartments/temp_{params.sampleName}/{params.sampleName}_eigen_{{.}}.txt ::: ${{chromosomes[@]}}
         parallel grep -P {{.}}'\t' results/compartments/temp_{params.sampleName}/{params.resolution}_windows.bed '>' results/compartments/temp_{params.sampleName}/{params.sampleName}_eigen_{{.}}.bed ::: ${{chromosomes[@]}}
         parallel paste results/compartments/temp_{params.sampleName}/{params.sampleName}_eigen_{{.}}.bed results/compartments/temp_{params.sampleName}/{params.sampleName}_eigen_{{.}}.txt '>' results/compartments/{params.sampleName}_eigen_{{.}}.bedgraph ::: ${{chromosomes[@]}}
-        gzip results/compartments/{params.sampleName}_eigen*.bedgraph > {output.compartment_file}
+        gzip --stdout results/compartments/{params.sampleName}_eigen*.bedgraph > {output.compartment_file}
         rm -rf results/compartments/temp_{params.sampleName}/
         """
 
