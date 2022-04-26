@@ -398,7 +398,7 @@ rule run_juicebox_arrowhead:
         threads=config["juicer_arrowhead_threads"],
         normalization=config["juicer_arrowhead_normalization"],
         sliding_window=config["juicer_arrowhead_sliding_window"],
-        outputDirectory={sample}        
+        outputDirectory="{sample}",
     log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
     envmodules:
         "juicer/1.6.2",
