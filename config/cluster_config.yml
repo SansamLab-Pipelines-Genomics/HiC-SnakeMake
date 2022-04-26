@@ -70,3 +70,9 @@ run_juicebox_eigenvector:
     output: results/logs/{rule}.{wildcards.sample}.log
     error: results/logs/{rule}.{wildcards.sample}.err
 
+run_juicebox_arrowhead:
+    cpus-per-task: 12
+    mem:  96G
+    name: "{rule}.{wildcards.sample}"
+    output: results/logs/{rule}.{wildcards.sample}.log
+    error: results/logs/{rule}.{wildcards.sample}.err

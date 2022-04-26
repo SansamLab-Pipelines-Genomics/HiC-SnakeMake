@@ -362,7 +362,7 @@ rule run_juicebox_eigenvector:
         chrom_sizes=config["chrom_sizes"],
         normalization=config["juicer_eigenvector_normalization"],
         sampleName="{sample}"
-    log: "results/logs/snakelogs/run_juicebox.{sample}.log"
+    log: "results/logs/snakelogs/run_juicebox_eigenvector.{sample}.log"
     envmodules:
         "juicer/1.6.2",
         "java/amazon-corretto/11.0.7.10.1",
@@ -380,5 +380,32 @@ rule run_juicebox_eigenvector:
         rm -rf results/compartments/temp_{params.sampleName}/
         """
 
+#################################################################
+##                        Identify TADs                        ##
+#################################################################
 
+rule run_juicebox_arrowhead:
+    input:
+        hic_file="results/hic/{sample}.hic"
+    output:
+        5KbTADs="results/TADs/5000_blocks.bedpe",
+        10KbTADs="results/TADs/10000_blocks.bedpe",
+        25KbTADs="results/TADs/25000_blocks.bedpe",
+        50KbTADs="results/TADs/50000_blocks.bedpe"
+    params:
+        threads=config["juicer_arrowhead_threads"],
+        normalization=config["juicer_arrowhead_normalization"],
+        sliding_window=config["juicer_arrowhead_sliding_window"]        
+    log: "results/logs/snakelogs/run_run_juicebox_arrowhead.{sample}.log"
+    envmodules:
+        "juicer/1.6.2",
+        "java/amazon-corretto/11.0.7.10.1",
+    shell:
+        """
+        # run at multiple resolutions:  5kb, 10kb, 25kb, and 50kb
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/TADs
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/TADs
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/TADs
+        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/TADs
+        """
 
