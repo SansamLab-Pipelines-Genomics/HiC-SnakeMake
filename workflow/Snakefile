@@ -406,9 +406,9 @@ rule run_juicebox_arrowhead:
     shell:
         """
         # run at multiple resolutions:  5kb, 10kb, 25kb, and 50kb
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/TADs/{params.outputDirectory}
-        juicer_tools arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 50000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 100000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 250000 {input.hic_file} results/TADs/{params.outputDirectory}
+        juicer_tools48g arrowhead --threads {params.threads} -k {params.normalization} -m {params.sliding_window} -r 500000 {input.hic_file} results/TADs/{params.outputDirectory}
         """
 
